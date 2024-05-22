@@ -49,11 +49,12 @@ public class CourseService
     {
         try
         {
-            var query = @"mutation($id: String!) {deleteCourse(id: $id)";
+            var query = @"mutation($id: String!) { deleteCourse(id: $id) }";
             var request = new { query, variables = new { id } };
 
             var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", request);
 
+            response.EnsureSuccessStatusCode();
             return true; 
         }
         catch (Exception ex)

@@ -10,9 +10,9 @@
 
 @* @attribute [Authorize] *@
 @attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
 
-
-<h3>Index</h3>
+<h3>Courses</h3>
 
 @if (courses == null)
 {
@@ -28,6 +28,15 @@ else if (courses.Count == 0)
 }
 else
 {
+    if (deleteSuccess)
+    {
+        <span class="notification"><p>Course has been deleted.</p></span>
+    }
+    if (deleteError)
+    {
+        <span class="notification"><p>Something went wrong. Could not delete course.</p></span>
+    }
+
     <table class="table table-bordered">
         <thead>
             <tr class="course-header">
@@ -45,9 +54,9 @@ else
                 <tr class="course-info">
                     <th>@course.CourseTitle</th>
                     <th>@course.Category</th>
-                    <th class="buttons"> @* Edit / Remove  *@
+                    <th class="buttons">
                         <button class="btn btn-primary">Edit</button>
-                        <button class="btn btn-danger">Remove</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteAsync(course.Id)">Remove</button>
                     </th>
                 </tr>
             }
@@ -63,11 +72,14 @@ else
     private List<CourseSelect>? courses = new();
 
     private bool isError;
+    private bool deleteSuccess;
+    private bool deleteError;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            // await Task.Delay(3000);
             courses = await CourseService.GetAllCoursesAsync();
         }
         catch (Exception)
@@ -85,14 +97,17 @@ else
             if (result == true)
             {
                 var removedCourse = courses!.FirstOrDefault(c => c.Id == id);
-                courses!.Remove(removedCourse);
+                courses!.Remove(removedCourse!);
 
                 StateHasChanged();
+                deleteSuccess = true;
             }
+            else
+                deleteError = true;
         }
-        catch
+        catch (Exception)
         {
-            
+            deleteError = true;
         }
     }
 }
