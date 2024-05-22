@@ -10,7 +10,7 @@
         public bool IsBestseller { get; set; }
         public string? Category { get; set; }
         public Rating Rating { get; set; } = null!;
-        public Author Author { get; set; } = null!;
+        public CourseAuthor Author { get; set; } = null!;
         public List<Highlights> Highlights { get; set; } = null!;
         public List<ProgramDetail> Content { get; set; } = null!;
         public Price Prices { get; set; } = null!;

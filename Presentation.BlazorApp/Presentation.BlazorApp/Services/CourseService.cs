@@ -45,6 +45,63 @@ public class CourseService
 
     #endregion
 
+    #region GetAllAuthorsAsync
+    public async Task<List<CourseAuthor>?> GetAllAuthorsAsync()
+    {
+        try
+        {
+            var query = new GraphQLQuery { Query = "{ getAllCourses { author { fullName } }" };
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
+
+            return result?.Data.GetProperty("getAllCourses").EnumerateArray()
+                .Select(course => new CourseAuthor
+                {
+                    FullName = course.GetProperty("fullName").GetString() ?? ""
+                })
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching authors.");
+            return null;
+        }
+    }
+
+    #endregion
+
+    #region GetAllCategoriesAsync
+    public async Task<List<CourseCategory>?> GetAllCategoriesAsync()
+    {
+        try
+        {
+            var query = new GraphQLQuery { Query = "{ getAllCategories }" };
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
+
+            return result?.Data.GetProperty("getAllCourses").EnumerateArray()
+                .Select(course => new CourseCategory
+                {
+                    Category = course.GetProperty("category").GetString() ?? ""
+                })
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching authors.");
+            return null;
+        }
+    }
+
+    #endregion
+
+    #region DeleteCourseAsync
     public async Task<bool> DeleteCourseAsync(string id)
     {
         try
@@ -63,4 +120,6 @@ public class CourseService
             return false;
         }
     }
+
+    #endregion
 }

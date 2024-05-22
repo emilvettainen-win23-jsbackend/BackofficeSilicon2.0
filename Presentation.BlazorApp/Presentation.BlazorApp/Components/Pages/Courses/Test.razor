@@ -1,0 +1,58 @@
+﻿@page "/testar"
+
+@rendermode InteractiveServer
+
+<EditForm Model="Form" FormName="high" OnValidSubmit="HandleSubmitAsync" novalidate>
+
+    <InputText @bind-Value="Form.Highlight" class="form-control" />
+
+    @foreach (var highlight in Form.Highlights)
+    {
+        <label>Highlight</label>
+        <InputText @bind-Value="highlight.HighlightText" class="form-control" />
+        <button type="button" class="btn btn-danger" @onclick=" () => RemoveHighlight(highlight)">Remove</button>
+    }
+
+    <button type="button" class="btn btn-secondary" @onclick="AddHighlight">Add</button>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+
+</EditForm>
+
+@code {
+
+
+    [SupplyParameterFromForm]
+    private HighlightForm Form { get; set; } = new();
+
+
+    private void AddHighlight()
+    {
+        Form.Highlights.Add(new HighlightModel());
+    }
+
+    private void RemoveHighlight(HighlightModel highlight)
+    {
+        Form.Highlights.Remove(highlight);
+    }
+
+
+    private async Task HandleSubmitAsync()
+    {
+        //hantera forumlär
+    }
+
+    private class HighlightForm
+    {
+        public List<HighlightModel> Highlights { get; set; } = [];
+        public string? Highlight { get; set; }
+    }
+
+
+    private sealed class HighlightModel 
+    {
+        public string? HighlightText { get; set; }
+    }
+
+}

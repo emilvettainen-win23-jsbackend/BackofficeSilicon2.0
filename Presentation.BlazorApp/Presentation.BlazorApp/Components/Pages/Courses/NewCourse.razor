@@ -1,0 +1,207 @@
+﻿@page "/new-course"
+@using Presentation.BlazorApp.Models.Courses
+@using Presentation.BlazorApp.Services
+
+@rendermode InteractiveServer
+@inject HttpClient HttpClient
+@inject CourseService CourseService
+
+
+<section class="new-course">
+    <h3>New Course</h3>
+
+    <EditForm FormName="" Model="Course" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
+        <DataAnnotationsValidator />
+        <div class="content">
+            <div id="title" class="input-group">
+                <label for="title">Title</label>
+                <InputText id="title" @bind-Value="Course.CourseTitle" class="form-control" />
+            </div>
+            <div>
+                <label for="ingress">Ingress</label>
+                <InputText id="ingress" @bind-Value="Course.CourseIngress" class="form-control" />
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <InputTextArea id="description" @bind-Value="Course.CourseDescription" class="form-control" />
+            </div>
+            <div>
+                <label for="img">Image</label>
+                <div class="course-img">
+                    <InputFile id="img" OnChange="UploadCourseImg" />
+                    <img src="" />
+                </div>
+            </div>
+            <div>
+                <label for="bestseller">Bestseller</label>
+                <InputCheckbox id="bestseller" @bind-Value="Course.IsBestseller" class="form-check-input" />
+            </div>
+
+
+            <div>
+                <label for="title">Category</label>
+               @*  <InputText id="title" @bind-Value="@category" class="form-control" /> *@
+
+                <InputSelect @bind-Value="Course.Category"  class="form-control">
+                    <option value="">Select</option>
+                    @foreach (var category in testCategories)
+                    {
+                        <option checked="@category" value="@category">@category</option>
+                    }
+                </InputSelect>
+            </div>
+
+
+@*             <div>
+                <label for="title">Rating</label>
+                <InputNumber id="title" @bind-Value="Course.Rating.InNumbers" class="form-control" />
+                <InputNumber id="title" @bind-Value="Course.Rating.InProcent" class="form-control" />
+            </div> *@
+
+@*             scroll lista?
+            <div>
+                <label for="title">Author</label>
+                <InputText id="title" @bind-Value="Course.Author.FullName" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.Biography" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.ProfileImageUrl" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.SocialMedia.YouTubeUrl" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.SocialMedia.Subscribers" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.SocialMedia.FacebookUrl" class="form-control" />
+                <InputText id="title" @bind-Value="Course.Author.SocialMedia.Followers" class="form-control" />
+            </div> *@
+
+@*             <div>
+                <label for="title">Bestseller</label>
+                <InputNumber id="bestseller" @bind-Value="Price.OriginalPrice" class="form-control" />
+                <InputNumber id="bestseller" @bind-Value="Price.DiscountPrice" class="form-control" />
+            </div> *@
+
+
+
+@*             NULL REFERENCE HÄR?
+            <div>
+                <label for="title">Included</label>
+                <InputNumber id="title" @bind-Value="Course.Included.HoursOfVideo" class="form-control" />
+                <InputNumber id="title" @bind-Value="Course.Included.Articles" class="form-control" />
+                <InputNumber id="title" @bind-Value="Course.Included.Resources" class="form-control" />
+                <InputCheckbox id="bestseller" @bind-Value="Course.Included.LifetimeAccess" class="form-check-input" />
+                <InputCheckbox id="bestseller" @bind-Value="Course.Included.Certificate" class="form-check-input" />
+            </div> *@
+
+@*             <div id="form-buttons">
+                <button @onclick="" class="" type="button">Cancel</button>
+                <button @onclick="" class="" type="submit">Save</button>
+            </div> *@
+        </div>
+
+        <button type="submit">Save</button>
+    </EditForm>
+
+
+</section>
+
+@*         public List<Highlights> Highlights { get; set; } = null!;
+        public List<ProgramDetail> Content { get; set; } = null!; *@
+
+
+
+@code {
+    [SupplyParameterFromForm]
+    private Course Course { get; set; } = new();
+
+    // private List<CourseAuthor>? Authors = new();
+
+    // private List<CourseCategory>? Categories = new();
+
+    private string statusMessage = "";
+    private bool isError;
+
+    private List<string>? testCategories;
+
+
+
+    private async Task HandleSubmitAsync()
+    {
+        
+    }
+
+
+    private List<string> GenerateCategories()
+    {
+        return new List<string>
+        {
+            "Frontend",
+            "Backend",
+            "C#"
+        };
+    }
+
+    protected override void OnInitialized()
+    {
+        testCategories = GenerateCategories();
+    }
+
+
+    #region GetAuthorsAsync
+
+    private async Task GetAuthorsAsync()
+    {
+        try
+        {
+            // Authors = await CourseService.GetAllAuthorsAsync();
+        }
+        catch (Exception)
+        {
+            isError = true;
+        }
+    }
+
+    #endregion
+
+    #region GetCategoriesAsync
+
+    private async Task GetCategoriesAsync()
+    {
+        try
+        {
+            // Categories = await CourseService.GetAllCategoriesAsync();
+        }
+        catch (Exception)
+        {
+            isError = true;
+        }
+    }
+
+    #endregion
+
+    #region UploadCourseImg
+
+    private async Task UploadCourseImg(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            var url = "https://fileprovider-silicon-ev-er.azurewebsites.net/api/Upload?code=GJjHL29kB0kQP77bmDGnKEuWpfRlQnVsvW8RfuIpyv9MAzFuw0Xu9A%3D%3D&containerName=courses";
+
+            var formData = new MultipartFormDataContent();
+            formData.Headers.ContentType!.MediaType = "multipart/form-data";
+
+            formData.Add(new StreamContent(e.File.OpenReadStream()), "file", e.File.Name);
+            var response = await HttpClient.PostAsync(url, formData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                statusMessage = "Image was uploaded successfully.";
+            }
+            else
+            {
+                statusMessage = "Something went wrong. Could not upload file.";
+            }
+        }
+        else
+        {
+            statusMessage = "Please select a file to upload.";
+        }
+    }
+
+    #endregion
+}

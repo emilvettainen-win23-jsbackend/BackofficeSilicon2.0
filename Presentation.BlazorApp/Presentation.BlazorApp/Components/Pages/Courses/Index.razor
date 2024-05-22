@@ -12,59 +12,68 @@
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 
-<h3>Courses</h3>
+<section class="courses">
 
-@if (courses == null)
-{
-    <p>Loading...</p>
-}
-else if (isError)
-{
-    <p>Kan inte hämta kurser just nu.</p>
-}
-else if (courses.Count == 0)
-{
-    <p>No courses available.</p>
-}
-else
-{
-    if (deleteSuccess)
+    <div class="course-header">
+        <h3>Courses</h3>
+        <NavLink class="nav-link" href="/new-course">
+            <button class="btn btn-primary" href="/new-course">New course</button>
+        </NavLink>
+    </div>
+    
+
+    @if (courses == null)
     {
-        <span class="notification"><p>Course has been deleted.</p></span>
+        <p>Loading...</p>
     }
-    if (deleteError)
+    else if (isError)
     {
-        <span class="notification"><p>Something went wrong. Could not delete course.</p></span>
+        <p>Kan inte hämta kurser just nu.</p>
     }
+    else if (courses.Count == 0)
+    {
+        <p>No courses available.</p>
+    }
+    else
+    {
+        if (deleteSuccess)
+        {
+            <span class="notification"><p>Course has been deleted.</p></span>
+        }
+        if (deleteError)
+        {
+            <span class="notification"><p>Something went wrong. Could not delete course.</p></span>
+        }
 
-    <table class="table table-bordered">
-        <thead>
-            <tr class="course-header">
-                <th class="title">Title</th>               
-                <th>Category</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-
-            @foreach (var course in courses)
-            {
-                <tr class="course-info">
-                    <th>@course.CourseTitle</th>
-                    <th>@course.Category</th>
-                    <th class="buttons">
-                        <button class="btn btn-primary">Edit</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteAsync(course.Id)">Remove</button>
-                    </th>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="course-header">
+                    <th class="title">Title</th>
+                    <th>Category</th>
+                    <th>Action</th>
                 </tr>
-            }
+            </thead>
 
-        </tbody>
+            <tbody>
 
-    </table>
-}
+                @foreach (var course in courses)
+                {
+                    <tr class="course-info">
+                        <th>@course.CourseTitle</th>
+                        <th>@course.Category</th>
+                        <th class="buttons">
+                            <button class="btn btn-primary">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => DeleteAsync(course.Id)">Remove</button>
+                        </th>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+</section>
+
 
 
 
