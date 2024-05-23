@@ -9,14 +9,14 @@
         public string? CourseImageUrl { get; set; }
         public bool IsBestseller { get; set; }
         public string? Category { get; set; }
-        public Rating Rating { get; set; } = null!;
-        public CourseAuthor Author { get; set; } = null!;
-        public List<Highlights> Highlights { get; set; } = null!;
-        public List<ProgramDetail> Content { get; set; } = null!;
-        public Price Prices { get; set; } = null!;
-        public Included Included { get; set; } = null!;
-        public DateTime Created { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public Rating Rating { get; set; } = new Rating();
+        public Author Author { get; set; } = new Author();
+        public List<Highlights> Highlights { get; set; } = new List<Highlights>();
+        public List<ProgramDetail> Content { get; set; } = new List<ProgramDetail>();
+        public Price Prices { get; set; } = new Price();
+        public Included Included { get; set; } = new Included();
+        public DateTime Created { get; set; } = DateTime.Now;
+        public DateTime LastUpdated { get; set; } = DateTime.Now;
     }
 
     public class Rating
@@ -30,7 +30,7 @@
         public string FullName { get; set; } = null!;
         public string Biography { get; set; } = null!;
         public string? ProfileImageUrl { get; set; }
-        public SocialMedia? SocialMedia { get; set; }
+        public SocialMedia? SocialMedia { get; set; } = new SocialMedia();
     }
     public class Highlights
     {

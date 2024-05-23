@@ -1,5 +1,8 @@
-﻿using Presentation.BlazorApp.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage.Json;
+using Newtonsoft.Json;
+using Presentation.BlazorApp.Models;
 using Presentation.BlazorApp.Models.Courses;
+using System.Text;
 using System.Text.Json;
 
 namespace Presentation.BlazorApp.Services;
@@ -122,4 +125,37 @@ public class CourseService
     }
 
     #endregion
+
+    public async Task<bool> CreateCourseAsync(Course course)
+    {
+        try
+        {
+            var query = new
+            {
+                query = "mutation ($input: CourseCreateRequestInput!) {createCourse(input: $input {id} }",
+                variables = new { course }
+            };
+
+            //var jsonQuery = JsonConvert.SerializeObject(query);
+            //var content = new StringContent(jsonQuery, Encoding.UTF8, "application/json");
+
+            //var response = await _httpClient.PostAsync("", content);
+
+           
+
+
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating course.");
+            return false;
+        }
+
+    }
+
 }
