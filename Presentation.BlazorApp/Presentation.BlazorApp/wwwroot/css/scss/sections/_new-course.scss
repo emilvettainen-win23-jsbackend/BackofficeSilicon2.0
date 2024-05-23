@@ -1,0 +1,54 @@
+.new-course {
+
+    .container {
+
+        .content {
+
+            .checkbox-label {
+                margin-top: 8px;
+                margin-right: 8px;
+            }
+
+            .certificate {
+                margin-left: 20px;
+            }
+
+            .highlights {
+                display: flex;
+                flex-direction: column;
+
+                .highlight-item {
+                    margin-top: 10px;
+                }
+            }
+
+            .details {
+                display: flex;
+                flex-direction: column;
+
+                .detail-item {
+                    margin-top: 10px;
+                }
+            }
+        }
+
+        .form-buttons {
+            display: flex;
+            flex-direction: row;
+            padding: 20px 20px 20px 0px;
+            gap: 1rem;
+
+            .btn-primary {
+                padding: 8px 30px;
+            }
+
+            .nav-link {
+                padding: 0px;
+
+                .btn-danger {
+                    padding: 8px 25px;
+                }
+            }
+        }
+    }
+}

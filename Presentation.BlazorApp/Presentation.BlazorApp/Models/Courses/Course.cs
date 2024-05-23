@@ -2,7 +2,7 @@
 {
     public class Course
     {
-        public string Id { get; set; } = null!;
+        //public string Id { get; set; } = null!;
         public string CourseTitle { get; set; } = null!;
         public string CourseIngress { get; set; } = null!;
         public string CourseDescription { get; set; } = null!;
@@ -15,8 +15,6 @@
         public List<ProgramDetail> Content { get; set; } = new List<ProgramDetail>();
         public Price Prices { get; set; } = new Price();
         public Included Included { get; set; } = new Included();
-        public DateTime Created { get; set; } = DateTime.Now;
-        public DateTime LastUpdated { get; set; } = DateTime.Now;
     }
 
     public class Rating

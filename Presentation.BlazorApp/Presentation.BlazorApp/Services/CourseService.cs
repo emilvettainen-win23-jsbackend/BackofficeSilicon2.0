@@ -126,26 +126,19 @@ public class CourseService
 
     #endregion
 
+    #region CreateCourseAsync
+
     public async Task<bool> CreateCourseAsync(Course course)
     {
         try
         {
             var query = new
             {
-                query = "mutation ($input: CourseCreateRequestInput!) {createCourse(input: $input {id} }",
-                variables = new { course }
+                query = "mutation ($input: CourseCreateRequestInput!) {createCourse(input: $input) {id} }",
+                variables = new { input = course }
             };
 
-            //var jsonQuery = JsonConvert.SerializeObject(query);
-            //var content = new StringContent(jsonQuery, Encoding.UTF8, "application/json");
-
-            //var response = await _httpClient.PostAsync("", content);
-
-           
-
-
-
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=Hdh1N9pxfiRQQL-L2i2Q9k6Kt7AZRlamhYKcr8ZVLwIAAzFuREhEZw%3D%3D", query);
 
             response.EnsureSuccessStatusCode();
             return true;
@@ -155,7 +148,11 @@ public class CourseService
             _logger.LogError(ex, "Error creating course.");
             return false;
         }
-
     }
+
+    #endregion
+
+
+    //updateCourse modell med id input, ej datum
 
 }
