@@ -48,6 +48,39 @@ public class CourseService
 
     #endregion
 
+
+    #region GetOneCourseAsync
+    public async Task<List<CourseSelect>?> GetOneCourseAsync(string id)
+    {
+        try
+        {
+            var query = new GraphQLQuery { Query = "{ getCourseById { id courseTitle category } }" }; //utöka
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
+
+            return result?.Data.GetProperty("getAllCourses").EnumerateArray()
+                .Select(course => new CourseSelect
+                {
+                    Id = course.GetProperty("id").GetString() ?? "",
+                    CourseTitle = course.GetProperty("courseTitle").GetString() ?? "",
+                    Category = course.GetProperty("category").GetString() ?? ""
+
+                    //utöka
+                })
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching course.");
+            return null;
+        }
+    }
+
+    #endregion
+
     #region GetAllAuthorsAsync
     public async Task<List<CourseAuthor>?> GetAllAuthorsAsync()
     {
@@ -154,5 +187,7 @@ public class CourseService
 
 
     //updateCourse modell med id input, ej datum
+
+    //getCourseById, stringId
 
 }

@@ -2,7 +2,6 @@
 {
     public class Course
     {
-        //public string Id { get; set; } = null!;
         public string CourseTitle { get; set; } = null!;
         public string CourseIngress { get; set; } = null!;
         public string CourseDescription { get; set; } = null!;
