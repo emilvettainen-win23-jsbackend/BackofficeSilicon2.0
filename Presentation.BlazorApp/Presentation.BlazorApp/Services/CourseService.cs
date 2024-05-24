@@ -50,32 +50,98 @@ public class CourseService
 
 
     #region GetOneCourseAsync
-    public async Task<List<CourseSelect>?> GetOneCourseAsync(string id)
+    //public async Task<CourseOne?> GetOneCourseAsync(string courseId)
+    //{
+    //    try
+    //    {
+
+
+    //        var query = new GraphQLQuery { Query = @" ($id: ID!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category rating { inNumbers inProcent } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } prices { originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } } }" };
+
+    //        var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+    //        response.EnsureSuccessStatusCode();
+
+    //        var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
+
+    //        var courseData = result?.Data.GetProperty("getCourseById");
+
+    //        if (courseData == null) return null;
+
+    //        return new CourseOne
+    //        {
+    //            Id = courseData.GetProperty("id").GetString() ?? "",
+    //            CourseTitle = courseData.GetProperty("courseTitle").GetString() ?? "",
+    //            CourseIngress = courseData.GetProperty("courseIngress").GetString() ?? "",
+    //            CourseDescription = courseData.GetProperty("courseDescription").GetString() ?? "",
+    //            CourseImageUrl = courseData.GetProperty("courseImageUrl").GetString(),
+    //            IsBestseller = courseData.GetProperty("isBestseller").GetBoolean(),
+    //            Category = courseData.GetProperty("category").GetString(),
+    //            Rating = new Rating
+    //            {
+    //                InNumbers = courseData.GetProperty("rating").GetProperty("inNumbers").GetDecimal(),
+    //                InProcent = courseData.GetProperty("rating").GetProperty("inProcent").GetDecimal()
+    //            },
+    //            Author = new Author
+    //            {
+    //                FullName = courseData.GetProperty("author").GetProperty("fullName").GetString() ?? "",
+    //                Biography = courseData.GetProperty("author").GetProperty("biography").GetString() ?? "",
+    //                ProfileImageUrl = courseData.GetProperty("author").GetProperty("profileImageUrl").GetString(),
+    //                SocialMedia = new SocialMedia
+    //                {
+    //                    YouTubeUrl = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("youTubeUrl").GetString(),
+    //                    Subscribers = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("subscribers").GetString(),
+    //                    FacebookUrl = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("facebookUrl").GetString(),
+    //                    Followers = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("followers").GetString()
+    //                }
+    //            },
+    //            Highlights = courseData.GetProperty("highlights").EnumerateArray()
+    //                .Select(h => new Highlights { Highlight = h.GetProperty("highlight").GetString() ?? "" })
+    //                .ToList(),
+    //            Content = courseData.GetProperty("content").EnumerateArray()
+    //                .Select(c => new ProgramDetail
+    //                {
+    //                    Title = c.GetProperty("title").GetString() ?? "",
+    //                    Description = c.GetProperty("description").GetString() ?? ""
+    //                })
+    //                .ToList(),
+    //            Prices = new Price
+    //            {
+    //                OriginalPrice = courseData.GetProperty("prices").GetProperty("originalPrice").GetDecimal(),
+    //                DiscountPrice = courseData.GetProperty("prices").GetProperty("discountPrice").GetDecimal()
+    //            },
+    //            Included = new Included
+    //            {
+    //                HoursOfVideo = courseData.GetProperty("included").GetProperty("hoursOfVideo").GetInt32(),
+    //                Articles = courseData.GetProperty("included").GetProperty("articles").GetInt32(),
+    //                Resources = courseData.GetProperty("included").GetProperty("resources").GetInt32(),
+    //                LifetimeAccess = courseData.GetProperty("included").GetProperty("lifetimeAccess").GetBoolean(),
+    //                Certificate = courseData.GetProperty("included").GetProperty("certificate").GetBoolean()
+    //            }
+    //        };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Error fetching course.");
+    //        return null;
+    //    }
+    //}
+
+
+    public async Task<CourseOne> GetOneCourseAsync(string id)
     {
         try
         {
-            var query = new GraphQLQuery { Query = "{ getCourseById { id courseTitle category } }" }; //utöka
+            var query = new GraphQLQuery { Query = @" ($id: ID!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category rating { inNumbers inProcent } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } prices { originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } } }" };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            var response = await _httpClient.GetAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D");
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
-
-            return result?.Data.GetProperty("getAllCourses").EnumerateArray()
-                .Select(course => new CourseSelect
-                {
-                    Id = course.GetProperty("id").GetString() ?? "",
-                    CourseTitle = course.GetProperty("courseTitle").GetString() ?? "",
-                    Category = course.GetProperty("category").GetString() ?? ""
-
-                    //utöka
-                })
-                .ToList();
+            return await response.Content.ReadFromJsonAsync<CourseOne>();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching course.");
-            return null;
+            Console.WriteLine($"Error fetching course: {ex.Message}");
+            return null!;
         }
     }
 
