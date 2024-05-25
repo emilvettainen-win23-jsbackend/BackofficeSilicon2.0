@@ -50,93 +50,90 @@ public class CourseService
 
 
     #region GetOneCourseAsync
-    //public async Task<CourseOne?> GetOneCourseAsync(string courseId)
-    //{
-    //    try
-    //    {
-
-
-    //        var query = new GraphQLQuery { Query = @" ($id: ID!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category rating { inNumbers inProcent } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } prices { originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } } }" };
-
-    //        var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
-    //        response.EnsureSuccessStatusCode();
-
-    //        var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
-
-    //        var courseData = result?.Data.GetProperty("getCourseById");
-
-    //        if (courseData == null) return null;
-
-    //        return new CourseOne
-    //        {
-    //            Id = courseData.GetProperty("id").GetString() ?? "",
-    //            CourseTitle = courseData.GetProperty("courseTitle").GetString() ?? "",
-    //            CourseIngress = courseData.GetProperty("courseIngress").GetString() ?? "",
-    //            CourseDescription = courseData.GetProperty("courseDescription").GetString() ?? "",
-    //            CourseImageUrl = courseData.GetProperty("courseImageUrl").GetString(),
-    //            IsBestseller = courseData.GetProperty("isBestseller").GetBoolean(),
-    //            Category = courseData.GetProperty("category").GetString(),
-    //            Rating = new Rating
-    //            {
-    //                InNumbers = courseData.GetProperty("rating").GetProperty("inNumbers").GetDecimal(),
-    //                InProcent = courseData.GetProperty("rating").GetProperty("inProcent").GetDecimal()
-    //            },
-    //            Author = new Author
-    //            {
-    //                FullName = courseData.GetProperty("author").GetProperty("fullName").GetString() ?? "",
-    //                Biography = courseData.GetProperty("author").GetProperty("biography").GetString() ?? "",
-    //                ProfileImageUrl = courseData.GetProperty("author").GetProperty("profileImageUrl").GetString(),
-    //                SocialMedia = new SocialMedia
-    //                {
-    //                    YouTubeUrl = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("youTubeUrl").GetString(),
-    //                    Subscribers = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("subscribers").GetString(),
-    //                    FacebookUrl = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("facebookUrl").GetString(),
-    //                    Followers = courseData.GetProperty("author").GetProperty("socialMedia").GetProperty("followers").GetString()
-    //                }
-    //            },
-    //            Highlights = courseData.GetProperty("highlights").EnumerateArray()
-    //                .Select(h => new Highlights { Highlight = h.GetProperty("highlight").GetString() ?? "" })
-    //                .ToList(),
-    //            Content = courseData.GetProperty("content").EnumerateArray()
-    //                .Select(c => new ProgramDetail
-    //                {
-    //                    Title = c.GetProperty("title").GetString() ?? "",
-    //                    Description = c.GetProperty("description").GetString() ?? ""
-    //                })
-    //                .ToList(),
-    //            Prices = new Price
-    //            {
-    //                OriginalPrice = courseData.GetProperty("prices").GetProperty("originalPrice").GetDecimal(),
-    //                DiscountPrice = courseData.GetProperty("prices").GetProperty("discountPrice").GetDecimal()
-    //            },
-    //            Included = new Included
-    //            {
-    //                HoursOfVideo = courseData.GetProperty("included").GetProperty("hoursOfVideo").GetInt32(),
-    //                Articles = courseData.GetProperty("included").GetProperty("articles").GetInt32(),
-    //                Resources = courseData.GetProperty("included").GetProperty("resources").GetInt32(),
-    //                LifetimeAccess = courseData.GetProperty("included").GetProperty("lifetimeAccess").GetBoolean(),
-    //                Certificate = courseData.GetProperty("included").GetProperty("certificate").GetBoolean()
-    //            }
-    //        };
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Error fetching course.");
-    //        return null;
-    //    }
-    //}
-
 
     public async Task<CourseOne> GetOneCourseAsync(string id)
     {
         try
         {
-            var query = new GraphQLQuery { Query = @" ($id: ID!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category rating { inNumbers inProcent } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } prices { originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } } }" };
 
-            var response = await _httpClient.GetAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D");
+            var query = @" query ($id: String!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category created lastUpdated rating { inNumbers inProcent } prices {originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } highlights { highlight } content { title description } } }";
+            var request = new { query, variables = new { id } };
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", request);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<CourseOne>();
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            var document = JsonDocument.Parse(responseContent);
+
+            var root = document.RootElement;
+
+            if (root.GetProperty("data").TryGetProperty("getCourseById", out var courseElement))
+            {
+                var course = new CourseOne
+                {
+                    Id = courseElement.GetProperty("id").GetString() ?? "",
+                    CourseTitle = courseElement.GetProperty("courseTitle").GetString() ?? "",
+                    CourseIngress = courseElement.GetProperty("courseIngress").GetString() ?? "",
+                    CourseDescription = courseElement.GetProperty("courseDescription").GetString() ?? "",
+                    CourseImageUrl = courseElement.GetProperty("courseImageUrl").GetString() ?? "",
+                    IsBestseller = courseElement.GetProperty("isBestseller").GetBoolean(),
+                    Category = courseElement.GetProperty("category").GetString() ?? "",
+
+                    Rating = courseElement.TryGetProperty("rating", out var ratingElement) ? new Rating
+                    {
+                        InNumbers = courseElement.GetProperty("rating").GetProperty("inNumbers").GetDecimal(),
+                        InProcent = courseElement.GetProperty("rating").GetProperty("inProcent").GetDecimal()
+                    } : null!,
+
+                    Author = courseElement.TryGetProperty("author", out var authorElement) ? new Author
+                    {
+
+                        FullName = courseElement.GetProperty("author").GetProperty("fullName").GetString() ?? "",
+                        Biography = courseElement.GetProperty("author").GetProperty("biography").GetString() ?? "",
+                        ProfileImageUrl = courseElement.GetProperty("author").GetProperty("profileImageUrl").GetString() ?? "",
+
+                        SocialMedia = authorElement.TryGetProperty("socialMedia", out var socialMediaElement) ? new SocialMedia
+                        {
+                            YouTubeUrl = socialMediaElement.GetProperty("youTubeUrl").GetString() ?? "",
+                            Subscribers = socialMediaElement.GetProperty("subscribers").GetString() ?? "",
+                            FacebookUrl = socialMediaElement.GetProperty("facebookUrl").GetString() ?? "",
+                            Followers = socialMediaElement.GetProperty("followers").GetString() ?? ""
+                        } : null
+                    } : null!,
+
+                    Highlights = courseElement.TryGetProperty("highlights", out var highlightElement) ? highlightElement.EnumerateArray().Select(highlightElement => new Highlights
+                    {
+                        Highlight = highlightElement.GetProperty("highlights").GetString() ?? "",
+                    }).ToList() : new List<Highlights>(),
+
+                    Content = courseElement.TryGetProperty("content", out var contentElement) ? contentElement.EnumerateArray().Select(contentElement => new ProgramDetail
+                    {
+                        Title = contentElement.GetProperty("title").GetString() ?? "",
+                        Description = contentElement.GetProperty("description").GetString() ?? ""
+                    }).ToList() : new List<ProgramDetail>(),
+
+                    Prices = courseElement.TryGetProperty("prices", out var priceElement) ? new Price
+                    {
+                        OriginalPrice = courseElement.GetProperty("prices").GetProperty("originalPrice").GetDecimal(),
+                        DiscountPrice = courseElement.GetProperty("prices").GetProperty("discountPrice").GetDecimal()
+                    } : null!,
+
+                    Included = courseElement.TryGetProperty("included", out var includedElement) ? new Included
+                    {
+                        HoursOfVideo = courseElement.GetProperty("included").GetProperty("hoursOfVideo").GetInt32(),
+                        Articles = courseElement.GetProperty("included").GetProperty("articles").GetInt32(),
+                        Resources = courseElement.GetProperty("included").GetProperty("resources").GetInt32(),
+                        LifetimeAccess = courseElement.GetProperty("included").GetProperty("lifetimeAccess").GetBoolean(),
+                        Certificate = courseElement.GetProperty("included").GetProperty("certificate").GetBoolean()
+                    } : null!
+                };
+
+                return course;
+            }
+
+            return new CourseOne();
+            
         }
         catch (Exception ex)
         {
@@ -254,6 +251,6 @@ public class CourseService
 
     //updateCourse modell med id input, ej datum
 
-    //getCourseById, stringId
+    //getCourseById, string Id
 
 }
