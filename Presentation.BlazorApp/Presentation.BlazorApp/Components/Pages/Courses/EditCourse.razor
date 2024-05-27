@@ -4,9 +4,13 @@
 
 @page "/edit-course/{id}"
 
-@rendermode InteractiveServer
+
 @inject HttpClient HttpClient
 @inject CourseService CourseService
+@inject NavigationManager NavigationManager
+
+@attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
 
 
 <section class="update-course">
@@ -19,127 +23,136 @@
             </div>
         }
 
-        <h3>Edit Course</h3>
+        @if (isLoading)
+        {
+            <p> Loading ....</p>
+        }
+        else
+        {
+            <h3>Edit Course</h3>
 
-        <EditForm Model="UpdatedCourse" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
-            <DataAnnotationsValidator />
+            <EditForm Model="UpdatedCourse" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
+                <DataAnnotationsValidator />
 
-            <div class="content">
+                <div class="content">
 
-                <div>
-                    <label for="title">Title</label>
-                    <InputText id="title" @bind-Value="UpdatedCourse.CourseTitle" class="form-control" />
-                </div>
-
-                <div>
-                    <label for="ingress">Ingress</label>
-                    <InputText id="ingress" @bind-Value="UpdatedCourse.CourseIngress" class="form-control" />
-                </div>
-
-                <div>
-                    <label for="courseimg">Course image</label>
-                    <span>JPG, JPEG, SVG or PNG.</span>
-                    <span>Max filesize 2500 * 1500 </span>
-                    <div class="upload-image">
-                        <InputFile id="courseimg" @* OnChange="UploadCourseImg" *@ />
-                        <img src="@UpdatedCourse.CourseImageUrl" style="max-width: 200px; max-height: 200px;" />
-                        //delete excisiting?
-                    </div>
-                </div>
-
-                <div>
-                    <label class="checkbox-label" for="bestseller">Bestseller</label>
-                    <InputCheckbox id="bestseller" @bind-Value="UpdatedCourse.IsBestseller" class="form-check-input" />
-                </div>
-
-                <div>
-                    <label for="category">Category</label>
-                    <InputText id="category" @bind-Value="UpdatedCourse.Category" class="form-control" />
-                </div>
-
-                <div class="rating">
-                    <label for="rating">Rating in numbers</label>
-                    <InputNumber id="rating" @bind-Value="UpdatedCourse.Rating.InNumbers" class="form-control" />
-                    <label for="rating">Rating in procent</label>
-                    <InputNumber id="rating" @bind-Value="UpdatedCourse.Rating.InProcent" class="form-control" />
-                </div>
-
-                <div>
-                    <label for="author">Author</label>
-                    <InputText id="author" @bind-Value="UpdatedCourse.Author.FullName" class="form-control" placeholder="Full name" />
-                    <InputTextArea id="author" @bind-Value="UpdatedCourse.Author.Biography" class="form-control" placeholder="Biography" />
-
-                    <label for="authorimg">Profile image</label>
-                    <span>JPG, JPEG, SVG or PNG.</span>
-                    <span>Max filesize 2500 * 1500 </span>
-                    <div class="upload-image">
-                        <InputFile id="authorimg" @* OnChange="UploadAuthorImg" *@ />
-                        <img src="@UpdatedCourse.Author.ProfileImageUrl" style="max-width: 200px; max-height: 200px;" />
+                    <div>
+                        <label for="title">Title</label>
+                        <InputText id="title" @bind-Value="UpdatedCourse.CourseTitle" class="form-control" />
                     </div>
 
-                    <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.FacebookUrl" class="form-control" placeholder="Facebook url (optional)" />
-                    <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.YouTubeUrl" class="form-control" placeholder="YouTube url (optional)" />
-                    <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.Subscribers" class="form-control" placeholder="Subscribers (optional)" />
-                    <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.Followers" class="form-control" placeholder="Followers (optional)" />
-                </div>
+                    <div>
+                        <label for="ingress">Ingress</label>
+                        <InputText id="ingress" @bind-Value="UpdatedCourse.CourseIngress" class="form-control" />
+                    </div>
 
-                <div class="price">
-                    <label for="price">Original price</label>
-                    <InputNumber id="price" @bind-Value="UpdatedCourse.Prices.OriginalPrice" class="form-control" />
-                    <label for="price">Discounted price</label>
-                    <InputNumber id="price" @bind-Value="UpdatedCourse.Prices.DiscountPrice" class="form-control" />
-                </div>
+                    <div>
+                        <label for="courseimg">Course image</label>
+                        <span>JPG, JPEG, SVG or PNG.</span>
+                        <span>Max filesize 2500 * 1500 </span>
+                        <div class="upload-image">
+                            <InputFile id="courseimg" @bind-Value="UpdatedCourse.CourseImageUrl"/>
+                            <img src="@UpdatedCourse.CourseImageUrl" style="max-width: 200px; max-height: 200px;" />
+                            //delete excisiting?
+                        </div>
+                    </div>
 
-                <div>
-                    <label for="included">Hours of video</label>
-                    <InputNumber id="included" @bind-Value="UpdatedCourse.Included.HoursOfVideo" class="form-control" />
-                    <label for="included">Number of articles</label>
-                    <InputNumber id="included" @bind-Value="UpdatedCourse.Included.Articles" class="form-control" />
-                    <label for="included">Number of recourses</label>
-                    <InputNumber id="included" @bind-Value="UpdatedCourse.Included.Resources" class="form-control" />
-                    <label class="checkbox-label" for="included">Lifetime access</label>
-                    <InputCheckbox id="included" @bind-Value="UpdatedCourse.Included.LifetimeAccess" class="form-check-input" />
-                    <label class="checkbox-label certificate" for="included">Certificate</label>
-                    <InputCheckbox id="included" @bind-Value="UpdatedCourse.Included.Certificate" class="form-check-input" />
-                </div>
+                    <div>
+                        <label class="checkbox-label" for="bestseller">Bestseller</label>
+                        <InputCheckbox id="bestseller" @bind-Value="UpdatedCourse.IsBestseller" class="form-check-input" />
+                    </div>
+
+                    <div>
+                        <label for="category">Category</label>
+                        <InputText id="category" @bind-Value="UpdatedCourse.Category" class="form-control" />
+                    </div>
+
+                    <div class="rating">
+                        <label for="rating">Rating in numbers</label>
+                        <InputNumber id="rating" @bind-Value="UpdatedCourse.Rating.InNumbers" class="form-control" />
+                        <label for="rating">Rating in procent</label>
+                        <InputNumber id="rating" @bind-Value="UpdatedCourse.Rating.InProcent" class="form-control" />
+                    </div>
+
+                    <div>
+                        <label for="author">Author</label>
+                        <InputText id="author" @bind-Value="UpdatedCourse.Author.FullName" class="form-control" placeholder="Full name" />
+                        <InputTextArea id="author" @bind-Value="UpdatedCourse.Author.Biography" class="form-control" placeholder="Biography" />
+
+                        <label for="authorimg">Profile image</label>
+                        <span>JPG, JPEG, SVG or PNG.</span>
+                        <span>Max filesize 2500 * 1500 </span>
+                        <div class="upload-image">
+                            <InputFile id="authorimg" @bind-Value="UpdatedCourse.Author.ProfileImageUrl"/>
+                            <img src="@UpdatedCourse.Author.ProfileImageUrl" style="max-width: 200px; max-height: 200px;" />
+                        </div>
+
+                        <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.FacebookUrl" class="form-control" placeholder="Facebook url (optional)" />
+                        <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.YouTubeUrl" class="form-control" placeholder="YouTube url (optional)" />
+                        <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.Subscribers" class="form-control" placeholder="Subscribers (optional)" />
+                        <InputText id="author" @bind-Value="UpdatedCourse.Author.SocialMedia.Followers" class="form-control" placeholder="Followers (optional)" />
+                    </div>
+
+                    <div class="price">
+                        <label for="price">Original price</label>
+                        <InputNumber id="price" @bind-Value="UpdatedCourse.Prices.OriginalPrice" class="form-control" />
+                        <label for="price">Discounted price</label>
+                        <InputNumber id="price" @bind-Value="UpdatedCourse.Prices.DiscountPrice" class="form-control" />
+                    </div>
+
+                    <div>
+                        <label for="included">Hours of video</label>
+                        <InputNumber id="included" @bind-Value="UpdatedCourse.Included.HoursOfVideo" class="form-control" />
+                        <label for="included">Number of articles</label>
+                        <InputNumber id="included" @bind-Value="UpdatedCourse.Included.Articles" class="form-control" />
+                        <label for="included">Number of recourses</label>
+                        <InputNumber id="included" @bind-Value="UpdatedCourse.Included.Resources" class="form-control" />
+                        <label class="checkbox-label" for="included">Lifetime access</label>
+                        <InputCheckbox id="included" @bind-Value="UpdatedCourse.Included.LifetimeAccess" class="form-check-input" />
+                        <label class="checkbox-label certificate" for="included">Certificate</label>
+                        <InputCheckbox id="included" @bind-Value="UpdatedCourse.Included.Certificate" class="form-check-input" />
+                    </div>
 
                 <div class="highlights">
-                    <label>Highlights</label>
-                    <button type="button" class="btn btn-secondary" @onclick="AddHighlight">Add highlight</button>
-                    @foreach (var highlight in UpdatedCourse.Highlights)
-                    {
-                        <div class="highlight-item">
-                            <InputText @bind-Value="highlight.Highlight" class="form-control" />
-                            <button type="button" class="btn btn-danger" @onclick="() => RemoveHighlight(highlight)">Remove</button>
-                        </div>
-                    }
+                <label>Highlights</label>
+                <button type="button" class="btn btn-secondary" @onclick="AddHighlight">Add highlight</button>
+                @foreach (var highlight in UpdatedCourse.Highlights)
+                {
+                <div class="highlight-item">
+                <InputText @bind-Value="highlight.Highlight" class="form-control" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveHighlight(highlight)">Remove</button>
+                </div>
+                }
                 </div>
 
                 <div class="details">
-                    <label>Program details</label>
-                    <button type="button" class="btn btn-secondary" @onclick="AddProgramDetail">Add program detail</button>
+                <label>Program details</label>
+                <button type="button" class="btn btn-secondary" @onclick="AddProgramDetail">Add program detail</button>
 
-                    @foreach (var detail in UpdatedCourse.Content)
-                    {
-                        <div class="detail-item">
-                            <InputText @bind-Value="detail.Title" class="form-control" placeholder="Title" />
-                            <InputText @bind-Value="detail.Description" class="form-control" placeholder="Description" />
-                            <button type="button" class="btn btn-danger" @onclick="() => RemoveProgramDetail(detail)">Remove</button>
-                        </div>
-                    }
+                @foreach (var detail in UpdatedCourse.Content)
+                {
+                <div class="detail-item">
+                <InputText @bind-Value="detail.Title" class="form-control" placeholder="Title" />
+                <InputText @bind-Value="detail.Description" class="form-control" placeholder="Description" />
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveProgramDetail(detail)">Remove</button>
+                </div>
+                }
+                </div>
+               
                 </div>
 
-            </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Save</button>
 
-            <div class="form-buttons">
-                <button type="submit" class="btn btn-primary">Save</button>
+                    <NavLink class="nav-link" href="/courses">
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                    </NavLink>
+                </div>
 
-                <NavLink class="nav-link" href="/courses">
-                    <button type="button" class="btn btn-danger">Cancel</button>
-                </NavLink>
-            </div>
+            </EditForm>
+        }
 
-        </EditForm>
+        
 
     </div>
 
@@ -151,21 +164,34 @@
     private CourseOne UpdatedCourse { get; set; } = new();
 
     [Parameter]
-    public string id { get; set; } = null!;
+    public string? Id { get; set; }
 
     private string statusMessage = "";
     private bool isError;
+    private bool isLoading;
 
 
     protected override async Task OnInitializedAsync()
     {
+        if (string.IsNullOrEmpty(Id))
+        {
+            NavigationManager.NavigateTo("/courses");
+        }
+       
+
         try
         {
-            UpdatedCourse = await CourseService.GetOneCourseAsync(id);
+            isLoading = true;
+          
+            UpdatedCourse = await CourseService.GetOneCourseAsync(Id!);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            statusMessage = $"Error fetching course: {ex.Message}";
             isError = true;
+        }
+        finally{
+            isLoading = false;
         }
     }
 
@@ -274,15 +300,15 @@
 
     private async Task HandleSubmitAsync()
     {
-        // var success = await CourseService.CreateCourseAsync(Course);
+        // var success = await CourseService.UpdateCourseAsync(Id);
         // if (success)
         // {
-        //     statusMessage = "Course created successfully.";
+        //     statusMessage = "Course updated successfully.";
         //     isError = false;
         // }
         // else
         // {
-        //     statusMessage = "Failed to create course.";
+        //     statusMessage = "Failed to update course.";
         //     isError = true;
         // }
     }

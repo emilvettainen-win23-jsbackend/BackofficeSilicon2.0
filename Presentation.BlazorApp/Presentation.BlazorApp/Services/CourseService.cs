@@ -55,7 +55,6 @@ public class CourseService
     {
         try
         {
-
             var query = @" query ($id: String!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category created lastUpdated rating { inNumbers inProcent } prices {originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } highlights { highlight } content { title description } } }";
             var request = new { query, variables = new { id } };
 
@@ -63,9 +62,7 @@ public class CourseService
             response.EnsureSuccessStatusCode();
 
             var responseContent = await response.Content.ReadAsStringAsync();
-
             var document = JsonDocument.Parse(responseContent);
-
             var root = document.RootElement;
 
             if (root.GetProperty("data").TryGetProperty("getCourseById", out var courseElement))
@@ -79,68 +76,62 @@ public class CourseService
                     CourseImageUrl = courseElement.GetProperty("courseImageUrl").GetString() ?? "",
                     IsBestseller = courseElement.GetProperty("isBestseller").GetBoolean(),
                     Category = courseElement.GetProperty("category").GetString() ?? "",
-
+                    Created = courseElement.GetProperty("created").GetDateTime(),
+                    LastUpdated = courseElement.GetProperty("lastUpdated").GetDateTime(),
                     Rating = courseElement.TryGetProperty("rating", out var ratingElement) ? new Rating
                     {
-                        InNumbers = courseElement.GetProperty("rating").GetProperty("inNumbers").GetDecimal(),
-                        InProcent = courseElement.GetProperty("rating").GetProperty("inProcent").GetDecimal()
-                    } : null!,
-
+                        InNumbers = ratingElement.GetProperty("inNumbers").GetDecimal(),
+                        InProcent = ratingElement.GetProperty("inProcent").GetDecimal()
+                    } /*: new Rating(),*/ : null!,
                     Author = courseElement.TryGetProperty("author", out var authorElement) ? new Author
                     {
-
-                        FullName = courseElement.GetProperty("author").GetProperty("fullName").GetString() ?? "",
-                        Biography = courseElement.GetProperty("author").GetProperty("biography").GetString() ?? "",
-                        ProfileImageUrl = courseElement.GetProperty("author").GetProperty("profileImageUrl").GetString() ?? "",
-
+                        FullName = authorElement.GetProperty("fullName").GetString() ?? "",
+                        Biography = authorElement.GetProperty("biography").GetString() ?? "",
+                        ProfileImageUrl = authorElement.GetProperty("profileImageUrl").GetString() ?? "",
                         SocialMedia = authorElement.TryGetProperty("socialMedia", out var socialMediaElement) ? new SocialMedia
                         {
                             YouTubeUrl = socialMediaElement.GetProperty("youTubeUrl").GetString() ?? "",
                             Subscribers = socialMediaElement.GetProperty("subscribers").GetString() ?? "",
                             FacebookUrl = socialMediaElement.GetProperty("facebookUrl").GetString() ?? "",
                             Followers = socialMediaElement.GetProperty("followers").GetString() ?? ""
-                        } : null
-                    } : null!,
-
-                    Highlights = courseElement.TryGetProperty("highlights", out var highlightElement) ? highlightElement.EnumerateArray().Select(highlightElement => new Highlights
+                        } /*: new SocialMedia()*/ : null
+                    } /*: new Author(),*/ : null!,
+                    Highlights = courseElement.TryGetProperty("highlights", out var highlightsElement) ? highlightsElement.EnumerateArray().Select(highlightElement => new Highlights
                     {
-                        Highlight = highlightElement.GetProperty("highlights").GetString() ?? "",
+                        Highlight = highlightElement.GetProperty("highlight").GetString() ?? ""
                     }).ToList() : new List<Highlights>(),
-
                     Content = courseElement.TryGetProperty("content", out var contentElement) ? contentElement.EnumerateArray().Select(contentElement => new ProgramDetail
                     {
                         Title = contentElement.GetProperty("title").GetString() ?? "",
                         Description = contentElement.GetProperty("description").GetString() ?? ""
                     }).ToList() : new List<ProgramDetail>(),
-
                     Prices = courseElement.TryGetProperty("prices", out var priceElement) ? new Price
                     {
-                        OriginalPrice = courseElement.GetProperty("prices").GetProperty("originalPrice").GetDecimal(),
-                        DiscountPrice = courseElement.GetProperty("prices").GetProperty("discountPrice").GetDecimal()
-                    } : null!,
-
+                        OriginalPrice = priceElement.GetProperty("originalPrice").GetDecimal(),
+                        DiscountPrice = priceElement.GetProperty("discountPrice").GetDecimal()
+                    } /*: new Price(),*/ : null!,
                     Included = courseElement.TryGetProperty("included", out var includedElement) ? new Included
                     {
-                        HoursOfVideo = courseElement.GetProperty("included").GetProperty("hoursOfVideo").GetInt32(),
-                        Articles = courseElement.GetProperty("included").GetProperty("articles").GetInt32(),
-                        Resources = courseElement.GetProperty("included").GetProperty("resources").GetInt32(),
-                        LifetimeAccess = courseElement.GetProperty("included").GetProperty("lifetimeAccess").GetBoolean(),
-                        Certificate = courseElement.GetProperty("included").GetProperty("certificate").GetBoolean()
-                    } : null!
+                        HoursOfVideo = includedElement.GetProperty("hoursOfVideo").GetInt32(),
+                        Articles = includedElement.GetProperty("articles").GetInt32(),
+                        Resources = includedElement.GetProperty("resources").GetInt32(),
+                        LifetimeAccess = includedElement.GetProperty("lifetimeAccess").GetBoolean(),
+                        Certificate = includedElement.GetProperty("certificate").GetBoolean()
+                    } /*: new Included()*/ : null!,
                 };
 
                 return course;
             }
 
             return new CourseOne();
-            
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching course: {ex.Message}");
-            return null!;
+            return new CourseOne(); 
         }
     }
+
 
     #endregion
 
@@ -245,6 +236,15 @@ public class CourseService
             return false;
         }
     }
+
+    #endregion
+
+    #region UpdateCourseAsync
+
+    //public async Task<CourseOne> UpdateCourseAsync(Id)
+    //{
+
+    //}
 
     #endregion
 
