@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.Json;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using Newtonsoft.Json;
 using Presentation.BlazorApp.Models;
 using Presentation.BlazorApp.Models.Courses;
 using System.Text;
 using System.Text.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Presentation.BlazorApp.Services;
 
@@ -76,8 +78,8 @@ public class CourseService
                     CourseImageUrl = courseElement.GetProperty("courseImageUrl").GetString() ?? "",
                     IsBestseller = courseElement.GetProperty("isBestseller").GetBoolean(),
                     Category = courseElement.GetProperty("category").GetString() ?? "",
-                    Created = courseElement.GetProperty("created").GetDateTime(),
-                    LastUpdated = courseElement.GetProperty("lastUpdated").GetDateTime(),
+                    //Created = courseElement.GetProperty("created").GetDateTime(),
+                    //LastUpdated = courseElement.GetProperty("lastUpdated").GetDateTime(),
                     Rating = courseElement.TryGetProperty("rating", out var ratingElement) ? new Rating
                     {
                         InNumbers = ratingElement.GetProperty("inNumbers").GetDecimal(),
@@ -218,7 +220,7 @@ public class CourseService
     public async Task<bool> CreateCourseAsync(Course course)
     {
         try
-        {
+        {         
             var query = new
             {
                 query = "mutation ($input: CourseCreateRequestInput!) {createCourse(input: $input) {id} }",
@@ -241,16 +243,32 @@ public class CourseService
 
     #region UpdateCourseAsync
 
-    //public async Task<CourseOne> UpdateCourseAsync(Id)
-    //{
+    public async Task<bool> UpdateCourseAsync(CourseOne course)
+    {
+        try
+        {
+            var query = @"mutation updateCourse($input: CourseUpdateRequestInput!) { updateCourse (input: $input) { id } }";
 
-    //}
+            var request = new
+            {
+                query,
+                variables = new { input = course }
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=Hdh1N9pxfiRQQL-L2i2Q9k6Kt7AZRlamhYKcr8ZVLwIAAzFuREhEZw%3D%3D", request);
+
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating course.");
+            return false;
+        }
+
+    }
 
     #endregion
 
-
-    //updateCourse modell med id input, ej datum
-
-    //getCourseById, string Id
 
 }

@@ -1,0 +1,113 @@
+﻿@page "/subscribers"
+@using Presentation.BlazorApp.Models.Subscribers
+@using Presentation.BlazorApp.Services
+
+@inject HttpClient Http
+@inject SubscriberService SubscriberService
+
+@attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
+
+<h3>Subscribers</h3>
+
+
+<section class="subscribers">
+
+    <div class="subscribe-header">
+        <h3>Courses</h3>
+        <NavLink class="nav-link" href="/new-course">
+            <button class="btn btn-primary" href="/new-course">Add subscriber</button>
+        </NavLink>
+    </div>
+
+
+    @if (isError)
+    {
+        <p>Can not fetch subscribers right now.</p>
+    }
+    else if (subscribers.Count == 0)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        if (deleteSuccess)
+        {
+            <span class="notification"><p>Course has been deleted.</p></span>
+        }
+        if (deleteError)
+        {
+            <span class="notification"><p>Something went wrong. Could not delete course.</p></span>
+        }
+
+        <table class="table table-bordered">
+            <thead>
+                <tr class="course-header">
+                    <th class="title">Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var subscriber in subscribers)
+                {
+                    <tr class="course-info">
+                        <th>@subscriber.Email</th>
+                        <th class="buttons">
+
+                            <a href="/edit-course/@subscriber.Id" class="btn btn-primary">Edit</a>
+
+                            @* <button class="btn btn-danger" @onclick="() => DeleteAsync(subscriber.Id)">Remove</button> *@
+                        </th>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+</section>
+
+@code {
+    private List<Subscribe>? subscribers = new();
+
+    private bool isError;
+    private bool deleteSuccess;
+    private bool deleteError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            subscribers = await SubscriberService.GetAllSubscribersAsync();
+        }
+        catch (Exception)
+        {
+            isError = true;
+        }
+    }
+
+    // private async Task DeleteAsync(string id)
+    // {
+    //     try
+    //     {
+    //         var result = await SubscriberService.DeleteCourseAsync(id);
+
+    //         if (result == true)
+    //         {
+    //             var removedCourse = courses!.FirstOrDefault(c => c.Id == id);
+    //             courses!.Remove(removedCourse!);
+
+    //             StateHasChanged();
+    //             deleteSuccess = true;
+    //         }
+    //         else
+    //             deleteError = true;
+    //     }
+    //     catch (Exception)
+    //     {
+    //         deleteError = true;
+    //     }
+    // }
+}

@@ -15,6 +15,6 @@ public class CourseOne
     public List<ProgramDetail> Content { get; set; } = new List<ProgramDetail>();
     public Price Prices { get; set; } = new Price();
     public Included Included { get; set; } = new Included();
-    public DateTime Created { get; set; }
-    public DateTime LastUpdated { get; set; }
+    //public DateTime Created { get; set; }
+    //public DateTime LastUpdated { get; set; } 
 }

@@ -300,17 +300,17 @@
 
     private async Task HandleSubmitAsync()
     {
-        // var success = await CourseService.UpdateCourseAsync(Id);
-        // if (success)
-        // {
-        //     statusMessage = "Course updated successfully.";
-        //     isError = false;
-        // }
-        // else
-        // {
-        //     statusMessage = "Failed to update course.";
-        //     isError = true;
-        // }
+        var success = await CourseService.UpdateCourseAsync(UpdatedCourse);
+        if (success)
+        {
+            statusMessage = "Course updated successfully.";
+            isError = false;
+        }
+        else
+        {
+            statusMessage = "Failed to update course.";
+            isError = true;
+        }
     }
 
     #endregion
