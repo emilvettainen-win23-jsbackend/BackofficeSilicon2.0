@@ -22,15 +22,15 @@
     </div>
     
 
-    @if (courses == null)
+    @if (courses == null && isLoading)
     {
         <p>Loading...</p>
     }
     else if (isError)
     {
-        <p>Kan inte hämta kurser just nu.</p>
+        <p>Can not fetch courses right now.</p>
     }
-    else if (courses.Count == 0)
+    else if (courses?.Count == 0 && !isLoading)
     {
         <p>No courses available.</p>
     }
@@ -86,16 +86,22 @@
     private bool isError;
     private bool deleteSuccess;
     private bool deleteError;
+    bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            isLoading = true;
             courses = await CourseService.GetAllCoursesAsync();
         }
         catch (Exception)
         {
             isError = true;
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 

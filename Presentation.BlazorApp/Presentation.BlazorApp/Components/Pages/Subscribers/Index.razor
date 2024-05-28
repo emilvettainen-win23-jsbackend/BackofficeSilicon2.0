@@ -8,14 +8,12 @@
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 
-<h3>Subscribers</h3>
-
 
 <section class="subscribers">
 
     <div class="subscribe-header">
-        <h3>Courses</h3>
-        <NavLink class="nav-link" href="/new-course">
+        <h3>Subscribers</h3>
+        <NavLink class="nav-link" href="/new-subscriber">
             <button class="btn btn-primary" href="/new-course">Add subscriber</button>
         </NavLink>
     </div>
@@ -25,9 +23,9 @@
     {
         <p>Can not fetch subscribers right now.</p>
     }
-    else if (subscribers.Count == 0)
+    else if (subscribers?.Count == 0)
     {
-        <p>Loading...</p>
+        <p>No subscribers awailable.</p>
     }
     else
     {
@@ -58,7 +56,7 @@
 
                             <a href="/edit-course/@subscriber.Id" class="btn btn-primary">Edit</a>
 
-                            @* <button class="btn btn-danger" @onclick="() => DeleteAsync(subscriber.Id)">Remove</button> *@
+                            <button class="btn btn-danger" @onclick="() => DeleteAsync(subscriber.Email)">Remove</button>
                         </th>
                     </tr>
                 }
@@ -88,26 +86,26 @@
         }
     }
 
-    // private async Task DeleteAsync(string id)
-    // {
-    //     try
-    //     {
-    //         var result = await SubscriberService.DeleteCourseAsync(id);
+    private async Task DeleteAsync(string email)
+    {
+        try
+        {
+            var result = await SubscriberService.DeleteSubscriberAsync(email);
 
-    //         if (result == true)
-    //         {
-    //             var removedCourse = courses!.FirstOrDefault(c => c.Id == id);
-    //             courses!.Remove(removedCourse!);
+            if (result == true)
+            {
+                var removedSubscriber = subscribers!.FirstOrDefault(s => s.Email == email);
+                subscribers!.Remove(removedSubscriber!);
 
-    //             StateHasChanged();
-    //             deleteSuccess = true;
-    //         }
-    //         else
-    //             deleteError = true;
-    //     }
-    //     catch (Exception)
-    //     {
-    //         deleteError = true;
-    //     }
-    // }
+                StateHasChanged();
+                deleteSuccess = true;
+            }
+            else
+                deleteError = true;
+        }
+        catch (Exception)
+        {
+            deleteError = true;
+        }
+    }
 }
