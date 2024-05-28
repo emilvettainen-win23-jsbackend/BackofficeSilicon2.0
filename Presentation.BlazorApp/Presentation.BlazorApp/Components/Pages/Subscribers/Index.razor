@@ -50,11 +50,11 @@
 
                 @foreach (var subscriber in subscribers)
                 {
-                    <tr class="course-info">
+                    <tr class="subscriber-info">
                         <th>@subscriber.Email</th>
                         <th class="buttons">
 
-                            <a href="/edit-course/@subscriber.Id" class="btn btn-primary">Edit</a>
+                            <a href="/edit-subscription/@subscriber.Id" class="btn btn-primary">Edit</a>
 
                             <button class="btn btn-danger" @onclick="() => DeleteAsync(subscriber.Email)">Remove</button>
                         </th>
@@ -68,7 +68,7 @@
 </section>
 
 @code {
-    private List<Subscribe>? subscribers = new();
+    private List<AllSubscribers>? subscribers = new();
 
     private bool isError;
     private bool deleteSuccess;

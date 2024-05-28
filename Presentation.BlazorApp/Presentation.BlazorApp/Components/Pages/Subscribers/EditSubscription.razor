@@ -1,0 +1,125 @@
+﻿@using Presentation.BlazorApp.Models.Subscribers
+@using Presentation.BlazorApp.Services
+
+@page "/edit-subscription/{id}"
+
+@inject HttpClient HttpClient
+@inject SubscriberService SubscriberService
+@inject NavigationManager NavigationManager
+
+@attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
+
+<section class="update-subscription">
+    <div class="container">
+
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            <div class="status-message">
+                <p class="@(isError ? "text-danger" : "text-success")">@statusMessage</p>
+            </div>
+        }
+
+        @if (isLoading)
+        {
+            <p> Loading ....</p>
+        }
+        else
+        {
+            <h3>Edit Subscription</h3>
+
+            <EditForm Model="Subscriber" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
+                <DataAnnotationsValidator />
+
+                <div class="content">
+
+                    <div>
+                        <h5>Handle subscription for @Subscriber.Email:</h5>
+                    </div>
+
+                    <div class="checkboxes">
+                        <label class="checkbox-label" for="included">Daily Newsletter</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.DailyNewsletter" class="form-check-input" />
+                        <label class="checkbox-label certificate" for="included">Advertising Updates</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.AdvertisingUpdates" class="form-check-input" />
+                        <label class="checkbox-label" for="included">Week In Review</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.WeenInReview" class="form-check-input" />
+                        <label class="checkbox-label certificate" for="included">Event Updates</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.EventUpdates" class="form-check-input" />
+                        <label class="checkbox-label" for="included">Startups Weekly</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.StartupsWeekly" class="form-check-input" />
+                        <label class="checkbox-label certificate" for="included">Podcasts</label>
+                        <InputCheckbox id="included" @bind-Value="Subscriber.Podcasts" class="form-check-input" />
+                    </div>
+
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Save</button>
+
+                    <NavLink class="nav-link" href="/subscribers">
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                    </NavLink>
+                </div>
+
+            </EditForm>
+        }
+
+
+
+    </div>
+
+</section>
+
+@code {
+    [SupplyParameterFromForm]
+    private OneSubscriber Subscriber { get; set; } = new();
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    private string statusMessage = "";
+    private bool isError;
+    private bool isLoading;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Id))
+        {
+            NavigationManager.NavigateTo("/subscribers");
+        }
+
+
+        try
+        {
+            isLoading = true;
+
+            Subscriber = await SubscriberService.GetOneSubscriberAsync(Id!);
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error fetching subscriber: {ex.Message}";
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected async Task HandleSubmitAsync() 
+    {
+        var success = await SubscriberService.UpdateSubscriptionAsync(Subscriber);
+        if (success)
+        {
+            statusMessage = "Subscription updated successfully.";
+            isError = false;
+        }
+        else
+        {
+            statusMessage = "Failed to update subscription.";
+            isError = true;
+        }
+    }
+}

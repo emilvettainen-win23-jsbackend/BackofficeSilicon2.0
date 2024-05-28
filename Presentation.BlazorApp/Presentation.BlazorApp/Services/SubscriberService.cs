@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Internal;
-using Newtonsoft.Json;
-using Presentation.BlazorApp.Models.Courses;
+﻿using Newtonsoft.Json;
 using Presentation.BlazorApp.Models.Subscribers;
-using System.Net.Http;
 using System.Text;
 
 namespace Presentation.BlazorApp.Services;
@@ -18,7 +15,8 @@ public class SubscriberService
         _logger = logger;
     }
 
-    public async Task<List<Subscribe>?> GetAllSubscribersAsync()
+    #region GetAllSubscribersAsync
+    public async Task<List<AllSubscribers>?> GetAllSubscribersAsync()
     {
         try
         {
@@ -27,22 +25,25 @@ public class SubscriberService
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var subscribers = JsonConvert.DeserializeObject<List<Subscribe>>(content);
+                var subscribers = JsonConvert.DeserializeObject<List<AllSubscribers>>(content);
                 return subscribers;
             }
             else
             {
-                return new List<Subscribe>();
+                return new List<AllSubscribers>();
             }
         }
         catch (Exception ex) 
         {
             _logger.LogError(ex, "Error fetching subscribers.");
-            return new List<Subscribe>();
+            return new List<AllSubscribers>();
         }
-
     }
 
+    #endregion
+
+
+    #region DeleteSubscriberAsync
     public async Task<bool> DeleteSubscriberAsync(string email)
     {
         try
@@ -67,17 +68,66 @@ public class SubscriberService
         }
     }
 
+    #endregion
 
+
+    #region GetOneSubscriberAsync
+    public async Task<OneSubscriber> GetOneSubscriberAsync(string id)
+    {
+        try
+        {
+
+            var response = await _httpClient.GetAsync($"https://subscribeprovider-silicon-ev-er.azurewebsites.net/api/subscriber/{id}?code=GA5ZwspjZrIvu2RyVW2nYhmLQwt8PDZRS3f8otWRA_jIAzFuHNtZTA%3D%3D");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var subscriber = JsonConvert.DeserializeObject<OneSubscriber>(content);
+                return subscriber!;
+            }
+            else
+            {
+                return new OneSubscriber();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching subscriber.");
+            return new OneSubscriber();
+        }
+    }
+
+    #endregion
+
+
+    #region UpdateSubscriptionAsync
+
+    public async Task<bool> UpdateSubscriptionAsync(OneSubscriber updatedSubscriber)
+    {
+        try
+        {
+            var json = JsonConvert.SerializeObject(updatedSubscriber);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("https://subscribeprovider-silicon-ev-er.azurewebsites.net/api/UpdateSubscription?code=YNfeYvnfofwXXOuU1EfS82nf_B1v1ICHDPXHeGFvdhjGAzFuvtJsQw%3D%3D", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating subscriber.");
+            return false;
+        }
+    }
+
+    #endregion
 
 
 }
-
-//getone (id)
-//https://subscribeprovider-silicon-ev-er.azurewebsites.net/api/subscriber/{id}?code=GA5ZwspjZrIvu2RyVW2nYhmLQwt8PDZRS3f8otWRA_jIAzFuHNtZTA%3D%3D
-
-
-//delete (email)
-//https://subscribeprovider-silicon-ev-er.azurewebsites.net/api/delete?code=H9rAxAUCBEYTDONjEl5gTJ8NyGBdxXxMS8WrHlGu214EAzFuFqXTAA%3D%3D
-
-//update (allt, id och email required)
-//https://subscribeprovider-silicon-ev-er.azurewebsites.net/api/UpdateSubscription?code=YNfeYvnfofwXXOuU1EfS82nf_B1v1ICHDPXHeGFvdhjGAzFuvtJsQw%3D%3D

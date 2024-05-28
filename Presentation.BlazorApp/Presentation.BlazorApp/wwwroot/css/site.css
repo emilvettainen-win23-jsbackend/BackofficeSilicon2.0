@@ -661,3 +661,10 @@ form span.field-validation-error::after {
 .new-course .container .form-buttons .nav-link .btn-danger {
   padding: 8px 25px;
 }
+
+.update-subscription container .content {
+  border: 1px solid red;
+}
+.update-subscription container .content .checkboxes {
+  margin-top: 50px;
+}

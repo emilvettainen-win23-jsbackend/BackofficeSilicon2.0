@@ -2,7 +2,7 @@
 
 namespace Presentation.BlazorApp.Models.Subscribers;
 
-public class Subscribe
+public class AllSubscribers
 {
 
     [Required]
