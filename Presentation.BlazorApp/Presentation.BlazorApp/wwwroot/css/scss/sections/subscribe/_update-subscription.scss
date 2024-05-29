@@ -1,0 +1,41 @@
+.update-subscription {
+
+    .container {
+
+
+        .content {
+
+            h5 {
+            }
+
+            .checkboxes {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-top: 30px;
+
+                .checkbox {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 1rem;
+                }
+            }
+        }
+
+        .form-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            margin-top: 30px;
+
+            .btn-primary {
+
+            }
+
+            .nav-link {
+                padding: 0;
+            }
+        }
+    }
+}

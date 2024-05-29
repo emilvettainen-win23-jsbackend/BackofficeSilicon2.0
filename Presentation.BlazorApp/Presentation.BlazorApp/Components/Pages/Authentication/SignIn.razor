@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Presentation.BlazorApp.Components.Account.Pages
+@using Presentation.BlazorApp.Data
+@using Presentation.BlazorApp.Models.Account
+@using Presentation.BlazorApp.Services
+
+@page "/signin"
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<Login> Logger
+@* @inject UserService UserService *@
+@inject NavigationManager NavigationManager
+
+<section class="signin">
+    <div class="container">
+        <EditForm Model="SignInForm" method="post" FormName="signin" OnValidSubmit="SignInAsync" Enhance novalidate>
+            <DataAnnotationsValidator />
+            <h1>Welcome Back</h1>
+            <div class="content">
+                <div id="form-email" class="input-group">
+                    <label for="email">Email</label>
+                    <InputText id="email" @bind-Value="SignInForm.Email" class="form-control" />
+                    <ValidationMessage For="() => SignInForm.Email" class="text-danger" />
+                </div>
+                <div id="form-password" class="input-group">
+                    <label for="password">Password</label>
+                    <InputText id="password" @bind-Value="SignInForm.Password" class="form-control" type="password" />
+                    <ValidationMessage For="() => SignInForm.Password" class="text-danger" />
+                </div>
+                <div id="form-remember" class="checkbox-group">
+                    <InputCheckbox id="remember" @bind-Value="SignInForm.RememberMe" class="form-check-input" />
+                    <label for="remember">Remember me</label>
+                </div>
+                <button disabled="@IsBusy" id="form-submit" class="btn-theme" type="submit">
+                    @if (IsBusy)
+                    {
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    }
+                    <span>Sign In</span>
+                </button>
+                <a href="account/forgotpassword" id="form-forgot-password" class="text-m">Forgot your password?</a>
+                <hr id="form-hr" />
+            </div>
+        </EditForm>
+
+    </div>
+</section>
+
+@code {
+    private string? errorMessage;
+    private bool IsBusy;
+
+    [SupplyParameterFromForm]
+    private SignInModel SignInForm { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+
+
+    private async Task SignInAsync()
+    {
+        IsBusy = true;
+
+        var result = await SignInManager.PasswordSignInAsync(SignInForm.Email, SignInForm.Password, SignInForm.RememberMe, false);
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo(ReturnUrl ?? "/account/details");
+        }
+        else if (result.IsNotAllowed)
+        {
+            // await UserService.VerificationRequest(SignInForm.Email);
+            NavigationManager.NavigateTo($"account/registerconfirmation?email={SignInForm.Email}&returnUrl={ReturnUrl}");
+        }
+        else
+        {
+            SignInForm = new();
+            // ToastService.ShowToast("Incorrect email or password", ToastLevel.Error);
+            IsBusy = false;
+        }
+
+
+    }
+}

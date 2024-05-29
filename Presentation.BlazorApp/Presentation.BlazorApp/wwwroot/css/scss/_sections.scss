@@ -1,3 +1,13 @@
-@import './sections/_courses.scss';
-@import './sections/_new-course.scss';
-@import './sections/_update-subscription.scss';
+// Courses
+@import './sections/courses/_courses.scss';
+@import './sections/courses/_new-course.scss';
+@import './sections/courses/_update-course.scss';
+
+// Subscribe
+@import './sections/subscribe/_subscribers.scss';
+@import './sections//subscribe/_update-subscription.scss';
+
+// Authentication
+@import './sections/authentication/_signin.scss';
+
+

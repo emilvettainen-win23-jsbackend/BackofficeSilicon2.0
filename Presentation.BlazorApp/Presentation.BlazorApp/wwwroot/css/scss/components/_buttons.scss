@@ -1,4 +1,4 @@
-/*@mixin button {
+@mixin button {
     border-radius: 6px;
     text-align: center;
     font-size: 14px;
@@ -10,9 +10,9 @@
 }
 
 .btn-theme {
-    @include button;*/
-    /*background: $theme;*/
-    /*background: var(--color-theme);
+    @include button;
+    background: $theme;
+    background: var(--color-theme);
     color: var(--color-white);
     border: none;
 
@@ -160,4 +160,4 @@
         text-decoration: none;
         color: var(--color-gray-800);
     }
-}*/
+}

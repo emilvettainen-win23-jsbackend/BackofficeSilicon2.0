@@ -1,6 +1,6 @@
 ﻿@page "/subscribers"
 @using Presentation.BlazorApp.Models.Subscribers
-@* @using Presentation.BlazorApp.Services *@
+@using Presentation.BlazorApp.Services
 
 @inject HttpClient Http
 @inject SubscriberService SubscriberService
@@ -13,9 +13,9 @@
 
     <div class="subscribe-header">
         <h3>Subscribers</h3>
-        <NavLink class="nav-link" href="/new-subscriber">
+@*         <NavLink class="nav-link" href="/new-subscriber">
             <button class="btn btn-primary" href="/new-course">Add subscriber</button>
-        </NavLink>
+        </NavLink> *@
     </div>
 
 
@@ -23,9 +23,13 @@
     {
         <p>Can not fetch subscribers right now.</p>
     }
+    else if (isLoading)
+    {
+        <p>Loading...</p>
+    }
     else if (subscribers?.Count == 0)
     {
-        <p>No subscribers awailable.</p>
+        <p>No subscribers available.</p>
     }
     else
     {
@@ -73,16 +77,24 @@
     private bool isError;
     private bool deleteSuccess;
     private bool deleteError;
+    private bool isLoading;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             subscribers = await SubscriberService.GetAllSubscribersAsync();
+            isError = false;
+            isLoading = true;
         }
         catch (Exception)
         {
+            isLoading = false;
             isError = true;
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 

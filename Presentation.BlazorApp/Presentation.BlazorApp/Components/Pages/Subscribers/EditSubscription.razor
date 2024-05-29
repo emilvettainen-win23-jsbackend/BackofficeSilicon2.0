@@ -1,13 +1,13 @@
 ﻿@using Presentation.BlazorApp.Models.Subscribers
-@* @using Presentation.BlazorApp.Services *@
-@using Infrastructure.Services
+@using Presentation.BlazorApp.Services
+
 
 @page "/edit-subscription/{id}"
 
 @inject HttpClient HttpClient
-@* @inject SubscriberService SubscriberService *@
+@inject SubscriberService SubscriberService
 @inject NavigationManager NavigationManager
-@inject SubscriberService
+
 
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
@@ -28,7 +28,7 @@
         }
         else
         {
-            <h3>Edit Subscription</h3>
+            <h3>Edit Subscription For</h3>
 
             <EditForm Model="Subscriber" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
                 <DataAnnotationsValidator />
@@ -36,22 +36,35 @@
                 <div class="content">
 
                     <div>
-                        <h5>Handle subscription for @Subscriber.Email:</h5>
+                        <h5>@Subscriber.Email</h5>
                     </div>
 
                     <div class="checkboxes">
-                        <label class="checkbox-label" for="included">Daily Newsletter</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.DailyNewsletter" class="form-check-input" />
-                        <label class="checkbox-label certificate" for="included">Advertising Updates</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.AdvertisingUpdates" class="form-check-input" />
-                        <label class="checkbox-label" for="included">Week In Review</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.WeenInReview" class="form-check-input" />
-                        <label class="checkbox-label certificate" for="included">Event Updates</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.EventUpdates" class="form-check-input" />
-                        <label class="checkbox-label" for="included">Startups Weekly</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.StartupsWeekly" class="form-check-input" />
-                        <label class="checkbox-label certificate" for="included">Podcasts</label>
-                        <InputCheckbox id="included" @bind-Value="Subscriber.Podcasts" class="form-check-input" />
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.DailyNewsletter" class="form-check-input" />
+                            <label class="checkbox-label" for="included">Daily Newsletter</label>
+                        </div>
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.AdvertisingUpdates" class="form-check-input" />
+                            <label class="checkbox-label certificate" for="included">Advertising Updates</label>
+                        </div>
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.WeenInReview" class="form-check-input" />
+                            <label class="checkbox-label" for="included">Week In Review</label>
+                        </div>
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.EventUpdates" class="form-check-input" />
+                            <label class="checkbox-label certificate" for="included">Event Updates</label>
+                        </div>
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.StartupsWeekly" class="form-check-input" />
+                            <label class="checkbox-label" for="included">Startups Weekly</label>
+                        </div>
+                        <div class="checkbox">
+                            <InputCheckbox id="included" @bind-Value="Subscriber.Podcasts" class="form-check-input" />
+                            <label class="checkbox-label certificate" for="included">Podcasts</label>
+                        </div>
+
                     </div>
 
                 </div>

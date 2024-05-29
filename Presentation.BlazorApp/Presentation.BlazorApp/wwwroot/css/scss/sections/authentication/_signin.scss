@@ -1,0 +1,87 @@
+.signin {
+    padding: 2rem 0;
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1rem;
+        padding-top: 2rem;
+        grid-template-areas: "form" "external";
+
+        h1 {
+            padding-top: 2rem;
+            padding-bottom: .5rem;
+        }
+
+        form {
+            grid-area: form;
+            grid-column: 1/13;
+
+            @include lg {
+                grid-column: 3/11;
+            }
+
+            @include xl {
+                grid-column: 4/10;
+            }
+
+            @include xxl {
+                padding: 0 3rem;
+            }
+
+            .content {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: 1fr;
+                grid-template-areas: "email" "password" "remember" "button" "forgot" "hr";
+
+                .input-group {
+
+
+                    .form-control {
+                        width: 100%;
+                    }
+                }
+
+                .checkbox-group {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 1rem;
+
+                    .form-check-input:checked {
+                        background-color: var(--clr-success);
+                    }
+                }
+
+                #form-email {
+                    grid-area: email;
+                }
+
+                #form-password {
+                    grid-area: password;
+                }
+
+                #form-remember {
+                    grid-area: remember;
+                }
+
+                #form-submit {
+                    grid-area: button;
+                }
+
+                #form-forgot-password {
+                    grid-area: forgot;
+                    text-align: center;
+                    text-decoration: none;
+                    color: var(--clr-theme);
+                    font-weight: 600;
+                }
+
+                #form-hr {
+                    grid-area: hr;
+                }
+            }
+        }
+    }
+}
