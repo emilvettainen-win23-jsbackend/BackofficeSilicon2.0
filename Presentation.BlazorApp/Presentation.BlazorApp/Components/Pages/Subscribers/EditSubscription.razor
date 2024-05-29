@@ -1,11 +1,13 @@
 ﻿@using Presentation.BlazorApp.Models.Subscribers
-@using Presentation.BlazorApp.Services
+@* @using Presentation.BlazorApp.Services *@
+@using Infrastructure.Services
 
 @page "/edit-subscription/{id}"
 
 @inject HttpClient HttpClient
-@inject SubscriberService SubscriberService
+@* @inject SubscriberService SubscriberService *@
 @inject NavigationManager NavigationManager
+@inject SubscriberService
 
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
