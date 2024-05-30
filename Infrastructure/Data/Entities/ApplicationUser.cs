@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Entities;
 
-public class UserEntity : IdentityUser
+public class ApplicationUser : IdentityUser
 {
-    //public Guid Id { get; set; } = Guid.NewGuid();
-
     [ProtectedPersonalData]
     [Required]
     [Column(TypeName = "nvarchar(50)")]
@@ -29,6 +32,4 @@ public class UserEntity : IdentityUser
 
     [Column(TypeName = "datetime2")]
     public DateTime Updated { get; set; }
-
-
 }

@@ -1,13 +1,13 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Presentation.BlazorApp.Components.Account.Pages
-@using Presentation.BlazorApp.Data
+﻿@using Infrastructure.Data.Entities
+@using Microsoft.AspNetCore.Identity
+
 @using Presentation.BlazorApp.Models.Account
 @using Presentation.BlazorApp.Services
 
 @page "/signin"
 
 @inject SignInManager<ApplicationUser> SignInManager
-@inject ILogger<Login> Logger
+@inject ILogger<SignIn> Logger
 @* @inject UserService UserService *@
 @inject NavigationManager NavigationManager
 

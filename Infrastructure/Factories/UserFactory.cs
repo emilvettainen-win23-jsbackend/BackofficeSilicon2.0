@@ -22,7 +22,7 @@ public class UserFactory
     //        catch { }
     //        return null!;
     //    }
-    public static UserDto GetUser(UserEntity user)
+    public static UserDto GetUser(ApplicationUser user)
     {
         try
         {
