@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.BlazorApp.Models.Account;
+namespace Presentation.BlazorApp.Models.Authentication;
 
 public class SignInModel
 {

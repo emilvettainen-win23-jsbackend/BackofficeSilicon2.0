@@ -1,12 +1,13 @@
-﻿@using Infrastructure.Data.Entities
+﻿
+@using Presentation.BlazorApp.Models.Authentication
+@using Infrastructure.Data.Entities
+@using Presentation.BlazorApp.Services
 @using Microsoft.AspNetCore.Identity
 
-@using Presentation.BlazorApp.Models.Account
-@using Presentation.BlazorApp.Services
 
 @page "/signin"
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject SignInManager<ApplicationUser> SignManager
 @inject ILogger<SignIn> Logger
 @* @inject UserService UserService *@
 @inject NavigationManager NavigationManager
@@ -64,22 +65,22 @@
     {
         IsBusy = true;
 
-        var result = await SignInManager.PasswordSignInAsync(SignInForm.Email, SignInForm.Password, SignInForm.RememberMe, false);
-        if (result.Succeeded)
-        {
-            NavigationManager.NavigateTo(ReturnUrl ?? "/account/details");
-        }
-        else if (result.IsNotAllowed)
-        {
-            // await UserService.VerificationRequest(SignInForm.Email);
-            NavigationManager.NavigateTo($"account/registerconfirmation?email={SignInForm.Email}&returnUrl={ReturnUrl}");
-        }
-        else
-        {
-            SignInForm = new();
-            // ToastService.ShowToast("Incorrect email or password", ToastLevel.Error);
-            IsBusy = false;
-        }
+        // var result = await SignInManager.PasswordSignInAsync(SignInForm.Email, SignInForm.Password, SignInForm.RememberMe, false);
+        // if (result.Succeeded)
+        // {
+        //     NavigationManager.NavigateTo(ReturnUrl ?? "/account/details");
+        // }
+        // else if (result.IsNotAllowed)
+        // {
+        //     // await UserService.VerificationRequest(SignInForm.Email);
+        //     NavigationManager.NavigateTo($"account/registerconfirmation?email={SignInForm.Email}&returnUrl={ReturnUrl}");
+        // }
+        // else
+        // {
+        //     SignInForm = new();
+        //     // ToastService.ShowToast("Incorrect email or password", ToastLevel.Error);
+        //     IsBusy = false;
+        // }
 
 
     }

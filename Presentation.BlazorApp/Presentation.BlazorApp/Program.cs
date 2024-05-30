@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Presentation.BlazorApp;
 using Presentation.BlazorApp.Client.Pages;
 using Presentation.BlazorApp.Components;
-
-
+using Presentation.BlazorApp.Hubs;
 using Presentation.BlazorApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +56,11 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddAzureSignalR(options =>
+{
+    options.ConnectionString = builder.Configuration["AzureSignalRConnectionString"];
+});
+
 
 var app = builder.Build();
 
@@ -78,6 +81,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.MapHub<ChatHub>("/chathub");
 
 //added
 app.UseAuthentication();
@@ -88,6 +92,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Presentation.BlazorApp.Client._Imports).Assembly);
+    
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
