@@ -73,4 +73,26 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
+// ROLES
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//    string[] roles = ["SuperAdmin", "CIO", "Admin", "Manager", "User"];
+//    foreach (var role in roles)
+//        if (!await roleManager.RoleExistsAsync(role))
+//        {
+//            await roleManager.CreateAsync(new IdentityRole(role));
+//        }
+//}
+
+// POLICYS
+//builder.Services.AddAuthorization(x =>
+//{
+//    x.AddPolicy("SuperAdminAccess", policy => policy.RequireRole("SuperAdmin"));
+//    x.AddPolicy("CIOAccess", policy => policy.RequireRole("SuperAdmin", "CIO"));
+//    x.AddPolicy("AdminAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin"));
+//    x.AddPolicy("ManagerAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager"));
+//    x.AddPolicy("UserAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager", "User"));
+//});
+
 app.Run();
