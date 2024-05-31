@@ -26,7 +26,4 @@ public class SignUpModel
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
     public string ConfirmPassword { get; set; } = null!;
 
-    [Required]
-    [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms and conditions")]
-    public bool TermsAndConditions { get; set; } = false;
 }

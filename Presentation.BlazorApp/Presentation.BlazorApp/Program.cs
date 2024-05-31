@@ -1,11 +1,13 @@
 using Infrastructure.Data.Contexts;
 using Infrastructure.Data.Entities;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation.BlazorApp;
 using Presentation.BlazorApp.Client.Pages;
 using Presentation.BlazorApp.Components;
+using Presentation.BlazorApp.Configurations;
 using Presentation.BlazorApp.Hubs;
 using Presentation.BlazorApp.Services;
 
@@ -49,11 +51,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddDefaultTokenProviders();
 
 
-
-
-
-
-
 builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
 builder.Services.AddSignalR().AddAzureSignalR(options =>
@@ -62,7 +59,39 @@ builder.Services.AddSignalR().AddAzureSignalR(options =>
 });
 
 
+
+// POLICYS
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminAccess", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy("CIOAccess", policy => policy.RequireRole("SuperAdmin", "CIO"));
+    options.AddPolicy("AdminAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin"));
+    options.AddPolicy("ManagerAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager"));
+    options.AddPolicy("UserAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager", "User"));
+});
+
+
+
+
+
 var app = builder.Build();
+
+await RolesConfiguration.Roles(app.Services);
+
+//ROLES
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//    string[] roles = ["SuperAdmin", "CIO", "Admin", "Manager", "User"];
+//    foreach (var role in roles)
+//        if (!await roleManager.RoleExistsAsync(role))
+//        {
+//            await roleManager.CreateAsync(new IdentityRole(role));
+//        }
+//}
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -84,8 +113,8 @@ app.UseAntiforgery();
 app.MapHub<ChatHub>("/chathub");
 
 //added
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 
 app.MapRazorComponents<App>()
@@ -97,26 +126,27 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
+
+
+
 // ROLES
 //using (var scope = app.Services.CreateScope())
 //{
-//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//    string[] roles = ["SuperAdmin", "CIO", "Admin", "Manager", "User"];
-//    foreach (var role in roles)
-//        if (!await roleManager.RoleExistsAsync(role))
-//        {
-//            await roleManager.CreateAsync(new IdentityRole(role));
-//        }
+//    var services = scope.ServiceProvider;
+//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+//    await SeedRolesAsync(roleManager);
 //}
 
-// POLICYS
-//builder.Services.AddAuthorization(x =>
+//async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
 //{
-//    x.AddPolicy("SuperAdminAccess", policy => policy.RequireRole("SuperAdmin"));
-//    x.AddPolicy("CIOAccess", policy => policy.RequireRole("SuperAdmin", "CIO"));
-//    x.AddPolicy("AdminAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin"));
-//    x.AddPolicy("ManagerAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager"));
-//    x.AddPolicy("UserAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager", "User"));
-//});
+//    string[] roleNames = { "SuperAdmin", "CIO", "Admin", "Manager", "User" };
+//    foreach (var roleName in roleNames)
+//    {
+//        if (!await roleManager.RoleExistsAsync(roleName))
+//        {
+//            await roleManager.CreateAsync(new IdentityRole(roleName));
+//        }
+//    }
+//}
 
 app.Run();

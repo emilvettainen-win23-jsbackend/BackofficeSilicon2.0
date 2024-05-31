@@ -865,12 +865,24 @@ form span.field-validation-error::after {
   gap: 1rem;
   grid-template-columns: 1fr;
   grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "terms" "button";
+  /*                .checkbox-group {
+                      display: flex;
+                      flex-direction: row;
+                      align-items: center;
+
+                      .form-check-input {
+                          margin-right: 10px;
+                      }
+                  }*/
 }
 @media (min-width: 768px) {
   #signup .container form .content {
     grid-template-columns: repeat(2, 1fr);
     grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "terms terms" "button button";
   }
+}
+#signup .container form .content .input-group .form-control {
+  width: 100%;
 }
 #signup .container form .content #form-firstname {
   grid-area: firstname;

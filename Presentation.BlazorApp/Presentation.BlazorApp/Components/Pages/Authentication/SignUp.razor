@@ -5,85 +5,89 @@
 
 @page "/signup";
 
-<h3>SignUp</h3>
-
 @inject ILogger<SignUp> Logger
 @inject UserService UserService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@attribute [StreamRendering]
+@* @rendermode @(new InteractiveServerRenderMode(false)) *@
 
 
 <section id="signup">
     <div class="container">
 
-@*         @if (!string.IsNullOrEmpty(statusMessage))
+        @if (!string.IsNullOrEmpty(statusMessage))
         {
             <div class="status-message">
                 <p class="@(isError ? "text-danger" : "text-success")">@statusMessage</p>
             </div>
         }
-
         @if (isLoading)
         {
             <p> Loading ....</p>
         }
         else
         {
-        } *@
-
-        <EditForm Model="SignUpForm" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="SignUpAsync" FormName="register" novalidate>
+            <EditForm Model="SignUpForm"  method="post" OnValidSubmit="SignUpAsync" FormName="register" novalidate>
+                @* asp-route-returnUrl="@ReturnUrl" *@
             <DataAnnotationsValidator />
 
-            <h1>Create Account</h1>
-            <p>Already have an account? <a href="/account/signin">Sign in here.</a></p>
+            <h1>Register Account</h1>
+
             <div class="content">
                 <div id="form-firstname" class="input-group">
                     <label for="first-name">First name</label>
-                    <InputText id="first-name" @bind-Value="SignUpForm.FirstName" class="form-control" placeholder="Enter your first name" />
+                    <InputText id="first-name" @bind-Value="SignUpForm.FirstName" class="form-control" placeholder="Enter first name" />
                     <ValidationMessage For="() => SignUpForm.FirstName" class="text-danger" />
                 </div>
                 <div id="form-lastname" class="input-group">
                     <label for="last-name">Last name</label>
-                    <InputText id="last-name" @bind-Value="SignUpForm.LastName" class="form-control" placeholder="Enter your last name" />
+                    <InputText id="last-name" @bind-Value="SignUpForm.LastName" class="form-control" placeholder="Enter last name" />
                     <ValidationMessage For="() => SignUpForm.LastName" class="text-danger" />
                 </div>
                 <div id="form-email" class="input-group">
                     <label for="email">Email</label>
-                    <InputText id="email" @bind-Value="SignUpForm.Email" class="form-control" placeholder="Enter your email" />
+                    <InputText id="email" @bind-Value="SignUpForm.Email" class="form-control" placeholder="Enter email" />
                     <ValidationMessage For="() => SignUpForm.Email" class="text-danger" />
                 </div>
                 <div id="form-password" class="input-group">
                     <label for="password">Password</label>
-                    <InputText id="password" @bind-Value="SignUpForm.Password" class="form-control" placeholder="Enter your password" type="password" />
+                    <InputText id="password" @bind-Value="SignUpForm.Password" class="form-control" placeholder="Enter password" type="password" />
                     <ValidationMessage For="() => SignUpForm.Password" class="text-danger" />
                 </div>
                 <div id="form-confirm" class="input-group">
                     <label for="confirm-password">Confirm password</label>
-                    <InputText id="confirm-password" @bind-Value="SignUpForm.ConfirmPassword" class="form-control" placeholder="Enter your password again" type="password" />
+                    <InputText id="confirm-password" @bind-Value="SignUpForm.ConfirmPassword" class="form-control" placeholder="Enter password again" type="password" />
                     <ValidationMessage For="() => SignUpForm.ConfirmPassword" class="text-danger" />
                 </div>
-                <div id="form-terms" class="checkbox-group">
+@*                 <div id="form-terms" class="checkbox-group">
                     <InputCheckbox id="terms" @bind-Value="SignUpForm.TermsAndConditions" class="form-check-input" />
                     <label for="terms">I agree to the <NavLink href="/terms">Terms</NavLink> & <NavLink href="/conditions">Conditions</NavLink> </label>
                     <ValidationMessage For="() => SignUpForm.TermsAndConditions" class="text-danger" />
-                </div>
-                <button disabled="@IsBusy" id="form-submit" type="submit" class="btn-theme-large">
+                </div> *@
+                <button disabled="@IsBusy" id="form-submit" type="submit" class="btn-theme">
                     @if (IsBusy)
                     {
                         <div class="spinner-border spinner-border-sm" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     }
-                    <span>Sign Up</span>
+                    <span>Create Account</span>
                 </button>
             </div>
-        </EditForm>
+            </EditForm>            
+        }
+
+ 
     </div>
 </section>
 
 @code {
 
     private bool IsBusy;
+    private string statusMessage = "";
+    private bool isError;
+    private bool isLoading;
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
@@ -91,26 +95,27 @@
     [SupplyParameterFromForm]
     private SignUpModel SignUpForm { get; set; } = new();
 
-    public async Task SignUpAsync(EditContext editContext)
+    public async Task SignUpAsync()
     {
         IsBusy = true;
         try
         {
-            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Created = DateTime.Now };
+            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password ,Created = DateTime.Now };
             var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password);
             switch (createdResult.StatusCode)
             {
                 case ResultStatus.OK:
-                    await UserService.VerificationRequest(SignUpForm.Email);
-                    NavigationManager.NavigateTo($"account/registerconfirmation?email={SignUpForm.Email}&returnUrl={ReturnUrl}");
+                    statusMessage = $"User was created.";
+                    // NavigationManager.NavigateTo($"account/registerconfirmation?email={SignUpForm.Email}&returnUrl={ReturnUrl}");
                     break;
 
                 case ResultStatus.EXISTS:
+                    statusMessage = $"The user already exists.";
                     // ToastService.ShowToast("The email you entered is already associated with an account. Please use a different email or reset your password if you forgot it.", ToastLevel.Error);
                     break;
 
                 default:
-                    // ToastService.ShowToast("Our server is having a bad day. We're on it! Please try again later!", ToastLevel.Error);
+                    statusMessage = $"Unable to create user. Please try again later.";
                     break;
             }
 
@@ -118,7 +123,7 @@
         catch (Exception ex)
         {
             Logger.LogError($"ERROR : Register.SignUpAsync() :: {ex.Message}");
-            // ToastService.ShowToast("Our server is having a bad day. We're on it! Please try again later!", ToastLevel.Error);
+            statusMessage = $"Unable to create user. Please try again later.";
         }
         finally
         {

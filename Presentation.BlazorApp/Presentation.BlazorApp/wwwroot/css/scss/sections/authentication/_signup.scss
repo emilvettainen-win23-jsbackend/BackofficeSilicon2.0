@@ -37,7 +37,21 @@
                 }
 
                 .input-group {
+
+                    .form-control {
+                        width: 100%;
+                    }
                 }
+
+/*                .checkbox-group {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
+                    .form-check-input {
+                        margin-right: 10px;
+                    }
+                }*/
 
                 #form-firstname {
                     grid-area: firstname;
