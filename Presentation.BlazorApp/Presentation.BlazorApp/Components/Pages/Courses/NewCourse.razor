@@ -1,7 +1,9 @@
 ﻿@page "/new-course"
+@using Microsoft.AspNetCore.Authorization
 @using Presentation.BlazorApp.Models.Courses
 @using Presentation.BlazorApp.Services
 
+@attribute [Authorize]
 @rendermode InteractiveServer
 @inject HttpClient HttpClient
 @inject CourseService CourseService

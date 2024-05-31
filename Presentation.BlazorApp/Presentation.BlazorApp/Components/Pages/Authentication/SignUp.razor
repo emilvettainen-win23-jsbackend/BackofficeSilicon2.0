@@ -95,35 +95,72 @@
     [SupplyParameterFromForm]
     private SignUpModel SignUpForm { get; set; } = new();
 
+    // public async Task SignUpAsync()
+    // {
+    //     IsBusy = true;
+    //     try
+    //     {
+    //         var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password ,Created = DateTime.Now };
+    //         var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password);
+    //         switch (createdResult.StatusCode)
+    //         {
+    //             case ResultStatus.OK:
+    //                 user.EmailConfirmed = true;
+    //                 var updateResult = await UserService.UpdateUserAsync(user);
+    //                 statusMessage = $"User was created.";
+    //                 // NavigationManager.NavigateTo($"account/registerconfirmation?email={SignUpForm.Email}&returnUrl={ReturnUrl}");
+    //                 break;
+
+    //             case ResultStatus.EXISTS:
+    //                 statusMessage = $"The user already exists.";
+    //                 // ToastService.ShowToast("The email you entered is already associated with an account. Please use a different email or reset your password if you forgot it.", ToastLevel.Error);
+    //                 break;
+
+    //             default:
+    //                 statusMessage = $"Unable to create user. Please try again later.";
+    //                 break;
+    //         }
+
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Logger.LogError($"ERROR : Register.SignUpAsync() :: {ex.Message}");
+    //         statusMessage = $"Unable to create user. Please try again later.";
+    //     }
+    //     finally
+    //     {
+    //         IsBusy = false;
+    //     }
+    // }
+
     public async Task SignUpAsync()
     {
         IsBusy = true;
         try
         {
-            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password ,Created = DateTime.Now };
+            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password, Created = DateTime.Now };
+
             var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password);
-            switch (createdResult.StatusCode)
+            if (createdResult.StatusCode == ResultStatus.OK)
             {
-                case ResultStatus.OK:
-                    statusMessage = $"User was created.";
-                    // NavigationManager.NavigateTo($"account/registerconfirmation?email={SignUpForm.Email}&returnUrl={ReturnUrl}");
-                    break;
-
-                case ResultStatus.EXISTS:
-                    statusMessage = $"The user already exists.";
-                    // ToastService.ShowToast("The email you entered is already associated with an account. Please use a different email or reset your password if you forgot it.", ToastLevel.Error);
-                    break;
-
-                default:
-                    statusMessage = $"Unable to create user. Please try again later.";
-                    break;
+                user.EmailConfirmed = true;
+                var updateResult = await UserService.UpdateUserAsync(user);
+                statusMessage = "User was created successfully.";
+                // NavigationManager.NavigateTo(ReturnUrl ?? "/");
             }
-
+            else if (createdResult.StatusCode == ResultStatus.EXISTS)
+            {
+                statusMessage = "The user already exists.";
+            }
+            else
+            {
+                statusMessage = "Unable to create user. Please try again later.";
+            }
         }
         catch (Exception ex)
         {
-            Logger.LogError($"ERROR : Register.SignUpAsync() :: {ex.Message}");
-            statusMessage = $"Unable to create user. Please try again later.";
+            Logger.LogError($"ERROR: Register.SignUpAsync() :: {ex.Message}");
+            statusMessage = "Unable to create user. Please try again later.";
         }
         finally
         {

@@ -1,5 +1,6 @@
 ﻿@page "/courses"
 @using System.Text.Json
+@using Microsoft.AspNetCore.Authorization
 @using Presentation.BlazorApp.Models.Courses
 @using System.Net.Http.Json
 @using System.Text.Json.Serialization
@@ -8,7 +9,7 @@
 @inject HttpClient Http
 @inject CourseService CourseService
 
-@* @attribute [Authorize] *@
+@attribute [Authorize]
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 

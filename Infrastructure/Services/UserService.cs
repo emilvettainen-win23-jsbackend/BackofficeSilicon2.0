@@ -71,28 +71,44 @@ public class UserService
         }
     }
 
-    public async Task<ResponseResult> UpdateUserAsync(string userId, ApplicationUser dto)
+    //public async Task<ResponseResult> UpdateUserAsync(string userId, ApplicationUser dto)
+    //{
+    //    try
+    //    {
+    //        var user = await _userManager.FindByIdAsync(userId);
+    //        if (user == null)
+    //        {
+    //            return ResponseFactory.NotFound();
+    //        }
+
+    //        user.FirstName = dto.FirstName;
+    //        user.LastName = dto.LastName;
+    //        user.Password = dto.Password;
+    //        user.Updated = DateTime.Now;
+
+    //        var updateResult = await _userManager.UpdateAsync(user);
+
+    //        return updateResult.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError($"ERROR : UserService.UpdateUserAsync() :: {ex.Message}");
+    //        return ResponseFactory.ServerError();
+    //    }
+    //}
+
+    public async Task<ResponseResult> UpdateUserAsync(ApplicationUser user)
     {
         try
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return ResponseFactory.NotFound();
-            }
-
-            user.FirstName = dto.FirstName;
-            user.LastName = dto.LastName;
-            user.Password = dto.Password;
             user.Updated = DateTime.Now;
-
             var updateResult = await _userManager.UpdateAsync(user);
 
             return updateResult.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
         }
         catch (Exception ex)
         {
-            _logger.LogError($"ERROR : UserService.UpdateUserAsync() :: {ex.Message}");
+            _logger.LogError($"ERROR: UserService.UpdateUserAsync() :: {ex.Message}");
             return ResponseFactory.ServerError();
         }
     }

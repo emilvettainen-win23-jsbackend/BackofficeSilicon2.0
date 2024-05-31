@@ -1,9 +1,7 @@
-﻿
-@using Presentation.BlazorApp.Models.Authentication
+﻿@using Presentation.BlazorApp.Models.Authentication
 @using Infrastructure.Data.Entities
 @using Presentation.BlazorApp.Services
 @using Microsoft.AspNetCore.Identity
-
 
 @page "/signin"
 
@@ -86,7 +84,7 @@
         if (result.Succeeded)
         {
             statusMessage = $"You are signed in.";
-            // NavigationManager.NavigateTo(ReturnUrl ?? "");
+            NavigationManager.NavigateTo(ReturnUrl ?? "/");
         }
         else if (result.IsNotAllowed)
         {

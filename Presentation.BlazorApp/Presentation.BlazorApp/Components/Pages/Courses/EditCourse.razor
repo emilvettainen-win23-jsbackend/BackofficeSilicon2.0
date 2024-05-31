@@ -1,14 +1,14 @@
-﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using Presentation.BlazorApp.Models.Courses
 @using Presentation.BlazorApp.Services
 
 @page "/edit-course/{id}"
 
-
+@attribute [Authorize]
 @inject HttpClient HttpClient
 @inject CourseService CourseService
 @inject NavigationManager NavigationManager
-
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 
