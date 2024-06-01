@@ -3,7 +3,7 @@
 @using Presentation.BlazorApp.Models.Courses
 @using Presentation.BlazorApp.Services
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
 @rendermode InteractiveServer
 @inject HttpClient HttpClient
 @inject CourseService CourseService

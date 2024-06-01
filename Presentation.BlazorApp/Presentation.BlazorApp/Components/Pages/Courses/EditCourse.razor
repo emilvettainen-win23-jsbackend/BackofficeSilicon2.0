@@ -5,7 +5,7 @@
 
 @page "/edit-course/{id}"
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
 @inject HttpClient HttpClient
 @inject CourseService CourseService
 @inject NavigationManager NavigationManager

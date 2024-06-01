@@ -864,7 +864,7 @@ form span.field-validation-error::after {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
-  grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "terms" "button";
+  grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "role" "button";
   /*                .checkbox-group {
                       display: flex;
                       flex-direction: row;
@@ -878,7 +878,7 @@ form span.field-validation-error::after {
 @media (min-width: 768px) {
   #signup .container form .content {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "terms terms" "button button";
+    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "role role" "button button";
   }
 }
 #signup .container form .content .input-group .form-control {
@@ -899,9 +899,11 @@ form span.field-validation-error::after {
 #signup .container form .content #form-confirm {
   grid-area: confirm;
 }
-#signup .container form .content #form-terms {
-  grid-area: terms;
-  padding-top: 0.5rem;
+#signup .container form .content #form-role {
+  grid-area: role;
+}
+#signup .container form .content #form-role span {
+  padding-bottom: 5px;
 }
 #signup .container form .content #form-submit {
   grid-area: button;

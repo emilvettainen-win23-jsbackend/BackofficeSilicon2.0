@@ -29,11 +29,11 @@
                 display: grid;
                 gap: 1rem;
                 grid-template-columns: 1fr;
-                grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "terms" "button";
+                grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "role" "button";
 
                 @include md {
                     grid-template-columns: repeat(2, 1fr);
-                    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "terms terms" "button button";
+                    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "role role" "button button";
                 }
 
                 .input-group {
@@ -73,9 +73,12 @@
                     grid-area: confirm;
                 }
 
-                #form-terms {
-                    grid-area: terms;
-                    padding-top: .5rem;
+                #form-role {
+                    grid-area: role;
+
+                    span {
+                        padding-bottom: 5px;
+                    }
                 }
 
                 #form-submit {

@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Authorization
+
+@page "/orders"
+
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin, Manager")]
+
+<h3>Orders</h3>
+
+<h5>This page is under construction.</h5>
+
+@code {
+
+}

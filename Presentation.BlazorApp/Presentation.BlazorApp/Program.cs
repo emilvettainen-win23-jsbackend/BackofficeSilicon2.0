@@ -1,6 +1,7 @@
 using Infrastructure.Data.Contexts;
 using Infrastructure.Data.Entities;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,13 +27,6 @@ builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<SubscriberService>();
 builder.Services.AddScoped<UserService>();
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration["AZURE_DB"]));
@@ -60,36 +54,7 @@ builder.Services.AddSignalR().AddAzureSignalR(options =>
 
 
 
-// POLICYS
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("SuperAdminAccess", policy => policy.RequireRole("SuperAdmin"));
-    options.AddPolicy("CIOAccess", policy => policy.RequireRole("SuperAdmin", "CIO"));
-    options.AddPolicy("AdminAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin"));
-    options.AddPolicy("ManagerAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager"));
-    options.AddPolicy("UserAccess", policy => policy.RequireRole("SuperAdmin", "CIO", "Admin", "Manager", "User"));
-});
-
-
-
-
-
 var app = builder.Build();
-
-await RolesConfiguration.Roles(app.Services);
-
-//ROLES
-//using (var scope = app.Services.CreateScope())
-//{
-//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//    string[] roles = ["SuperAdmin", "CIO", "Admin", "Manager", "User"];
-//    foreach (var role in roles)
-//        if (!await roleManager.RoleExistsAsync(role))
-//        {
-//            await roleManager.CreateAsync(new IdentityRole(role));
-//        }
-//}
-
 
 
 
@@ -112,10 +77,6 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 app.MapHub<ChatHub>("/chathub");
 
-//added
-//app.UseAuthentication();
-//app.UseAuthorization();
-
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
@@ -126,27 +87,6 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
-
-
-
-// ROLES
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-//    await SeedRolesAsync(roleManager);
-//}
-
-//async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
-//{
-//    string[] roleNames = { "SuperAdmin", "CIO", "Admin", "Manager", "User" };
-//    foreach (var roleName in roleNames)
-//    {
-//        if (!await roleManager.RoleExistsAsync(roleName))
-//        {
-//            await roleManager.CreateAsync(new IdentityRole(roleName));
-//        }
-//    }
-//}
+await RolesConfiguration.Roles(app.Services);
 
 app.Run();

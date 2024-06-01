@@ -26,4 +26,7 @@ public class SignUpModel
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
     public string ConfirmPassword { get; set; } = null!;
 
+    [Required(ErrorMessage = "Role is required")]
+    public string Role { get; set; } = null!;
+
 }

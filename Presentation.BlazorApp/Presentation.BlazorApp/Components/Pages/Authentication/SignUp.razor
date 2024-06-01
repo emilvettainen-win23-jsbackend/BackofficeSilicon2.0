@@ -1,16 +1,17 @@
 ﻿@using Infrastructure.Data.Entities
 @using Infrastructure.Helpers
 @using Infrastructure.Services
+@using Microsoft.AspNetCore.Authorization
 @using Presentation.BlazorApp.Models.Authentication
 
 @page "/signup";
 
+@attribute [Authorize(Roles = "SuperAdmin")]
+@attribute [StreamRendering]
 @inject ILogger<SignUp> Logger
 @inject UserService UserService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-@attribute [StreamRendering]
-@* @rendermode @(new InteractiveServerRenderMode(false)) *@
 
 
 <section id="signup">
@@ -60,11 +61,24 @@
                     <InputText id="confirm-password" @bind-Value="SignUpForm.ConfirmPassword" class="form-control" placeholder="Enter password again" type="password" />
                     <ValidationMessage For="() => SignUpForm.ConfirmPassword" class="text-danger" />
                 </div>
-@*                 <div id="form-terms" class="checkbox-group">
-                    <InputCheckbox id="terms" @bind-Value="SignUpForm.TermsAndConditions" class="form-check-input" />
-                    <label for="terms">I agree to the <NavLink href="/terms">Terms</NavLink> & <NavLink href="/conditions">Conditions</NavLink> </label>
-                    <ValidationMessage For="() => SignUpForm.TermsAndConditions" class="text-danger" />
+@*                 <div id="form-role" class="input-group">
+                     <label for="role">Role</label>
+                     <span>"SuperAdmin", "CIO", "Admin", "Manager"</span>
+                     <InputText id="role" @bind-Value="SignUpForm.Role" class="form-control" placeholder="Enter role" />
+                     <ValidationMessage For="() => SignUpForm.Role" class="text-danger" />
                 </div> *@
+
+                    <div id="form-role" class="input-group">
+                        <label for="role">Role</label>
+                        <InputSelect id="role" @bind-Value="SignUpForm.Role" class="form-control">
+                            <option value="SuperAdmin">SuperAdmin</option>
+                            <option value="CIO">CIO</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Manager">Manager</option>
+                        </InputSelect>
+                        <ValidationMessage For="() => SignUpForm.Role" class="text-danger" />
+                    </div>
+
                 <button disabled="@IsBusy" id="form-submit" type="submit" class="btn-theme">
                     @if (IsBusy)
                     {
@@ -102,7 +116,7 @@
         {
             var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password, Created = DateTime.Now };
 
-            var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password);
+            var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password, SignUpForm.Role);
             if (createdResult.StatusCode == ResultStatus.OK)
             {
                 user.EmailConfirmed = true;

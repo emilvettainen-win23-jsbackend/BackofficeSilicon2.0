@@ -1,37 +1,26 @@
-﻿
-using Azure.Messaging.ServiceBus;
-using Infrastructure.Data.Entities;
+﻿using Infrastructure.Data.Entities;
 using Infrastructure.Dtos;
 using Infrastructure.Factories;
 using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Text;
 
 namespace Infrastructure.Services;
 
 public class UserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<UserService> _logger;
-    private readonly HttpClient _httpClient;
-    private readonly IConfiguration _config;
-    private readonly AuthenticationStateProvider _authenticationStateProvider;
-    private readonly ServiceBusClient _serviceBusClient;
 
-    public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<UserService> logger, AuthenticationStateProvider authenticationStateProvider, HttpClient httpClient, IConfiguration config)
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
+
+    public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger, AuthenticationStateProvider authenticationStateProvider)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
         _logger = logger;
         _authenticationStateProvider = authenticationStateProvider;
-        _httpClient = httpClient;
-        _config = config;
     }
 
     public async Task<UserDto> GetCurrentUserAsync()
@@ -46,11 +35,9 @@ public class UserService
 
         var currentUser = await _userManager.GetUserAsync(user);
         return UserFactory.GetUser(currentUser!) ?? new UserDto();
-
-
     }
 
-    public async Task<ResponseResult> CreateUserAsync(ApplicationUser user, string password)
+    public async Task<ResponseResult> CreateUserAsync(ApplicationUser user, string password, string role)
     {
         try
         {
@@ -62,6 +49,14 @@ public class UserService
             }
 
             var createUser = await _userManager.CreateAsync(user, password);
+
+            if (!createUser.Succeeded)
+            {
+                return ResponseFactory.Error();
+            }
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
+
             return createUser.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
         }
         catch (Exception ex)
@@ -87,17 +82,4 @@ public class UserService
         }
     }
 
-    public async Task VerificationRequest(string email)
-    {
-        try
-        {
-            var sender = _serviceBusClient.CreateSender("verification_request");
-            await sender.SendMessageAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { Email = email }))));
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
-    }
 }
