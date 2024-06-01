@@ -1,14 +1,14 @@
 using Infrastructure.Data.Contexts;
 using Infrastructure.Data.Entities;
 using Infrastructure.Services;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation.BlazorApp;
-using Presentation.BlazorApp.Client.Pages;
+
 using Presentation.BlazorApp.Components;
-using Presentation.BlazorApp.Configurations;
+
 using Presentation.BlazorApp.Hubs;
 using Presentation.BlazorApp.Services;
 
@@ -21,6 +21,11 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+}).AddIdentityCookies();
 
 
 builder.Services.AddScoped<HttpClient>();
@@ -87,6 +92,6 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
-await RolesConfiguration.Roles(app.Services);
+//await RolesConfiguration.Roles(app.Services);
 
 app.Run();
