@@ -15,7 +15,6 @@ public class UserFactory
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email!,
-                Password = user.Password,
                 Created = user.Created,
                 Updated = user.Updated,
             };
