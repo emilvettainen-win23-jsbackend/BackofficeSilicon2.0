@@ -30,7 +30,6 @@
         else
         {
             <EditForm Model="SignUpForm"  method="post" OnValidSubmit="SignUpAsync" FormName="register" novalidate>
-                @* asp-route-returnUrl="@ReturnUrl" *@
             <DataAnnotationsValidator />
 
             <h1>Register Account</h1>
@@ -114,7 +113,6 @@
             if (createdResult.StatusCode == ResultStatus.OK)
             {
                 user.EmailConfirmed = true;
-                // var updateResult = await UserService.UpdateUserAsync(user);
                 var updateResult = await UserService.ConfirmEmailAsync(user);
                 statusMessage = "User was created successfully.";
             }

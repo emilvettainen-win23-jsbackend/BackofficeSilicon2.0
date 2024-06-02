@@ -1,9 +1,9 @@
 ﻿@page "/customers"
-@using System.Text.Json
+@* @using System.Text.Json *@
 @using Microsoft.AspNetCore.Authorization
 @using Presentation.BlazorApp.Models.Customers
-@using System.Net.Http.Json
-@using System.Text.Json.Serialization
+@* @using System.Net.Http.Json
+@using System.Text.Json.Serialization *@
 @using Presentation.BlazorApp.Services
 
 @inject HttpClient Http
@@ -54,17 +54,21 @@
 
             <tbody>
 
-                @foreach (var customer in customers)
-                {
-@*                     <tr class="course-info">
+                @if (customers != null) {
+@*                     @foreach (var customer in customers!)
+                    {
+                        <tr class="course-info">
                         <th>@customer.FirstName @customer.LastName</th>
                         <th>@customer.Email</th>
                         <th class="buttons">
-                            <a href="/edit-course/@customer.Id" class="btn btn-primary">Edit</a>
-                            <button class="btn btn-danger" @onclick="() => DeleteAsync(customer.Id)">Remove</button>
+                        <a href="/edit-course/@customer.Id" class="btn btn-primary">Edit</a>
+                         <button class="btn btn-danger" @onclick="() => DeleteAsync(customer.Id)">Remove</button>
                         </th>
-                    </tr> *@
+                        </tr>
+                    } *@
                 }
+
+
 
             </tbody>
 

@@ -25,42 +25,33 @@ public class UserService
         _authenticationStateProvider = authenticationStateProvider;
     }
 
-    //public async Task<UserDto> GetCurrentUserAsync()
-    //{
-    //    var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-    //    var user = authState.User;
-
-    //    if (user.Identity == null || !user.Identity.IsAuthenticated)
-    //    {
-    //        return new UserDto();
-    //    }
-
-    //    var currentUser = await _userManager.GetUserAsync(user);
-    //    return UserFactory.GetUser(currentUser!) ?? new UserDto();
-    //}
-
     public async Task<UserDto?> GetOneUserAsync(string userId)
     {
         try
         {
             var user = await _userManager.FindByIdAsync(userId);
 
-            var userDto = new UserDto
+            if (user != null)
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                ConfirmPassword = "", 
-                Created = user.Created,
-                Updated = user.Updated
-            };
+                var userDto = new UserDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email!,
+                    Password = user.Password,
+                    ConfirmPassword = "",
+                    Created = user.Created,
+                    Updated = user.Updated
+                };
 
-            var roles = await _userManager.GetRolesAsync(user);
-            userDto.Role = string.Join(",", roles);
+                var roles = await _userManager.GetRolesAsync(user);
+                userDto.Role = string.Join(",", roles);
 
-            return userDto;
+                return userDto;
+            }
+
+            return null;
         }
         catch (Exception ex)
         {

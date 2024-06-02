@@ -58,8 +58,6 @@
                         <th>@account.FirstName @account.LastName</th>
                         <th>@account.Email</th>
                         <th class="buttons">
-                            @* <button class="btn btn-primary">Edit</button> *@
-                            @* <a href="@($"/edit-course/{course.Id}")" class="btn btn-primary">Edit</a> *@
                             <a href="/edit-user/@account.Id" class="btn btn-primary">Edit</a>
 
                             <button class="btn btn-danger" @onclick="() => DeleteAsync(account.Id)">Remove</button>

@@ -1,11 +1,12 @@
-﻿@page "/chat"
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.SignalR.Client
+
+@page "/chat"
 
 <PageTitle>Messages</PageTitle>
 
-
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
 @rendermode InteractiveAuto
-
-@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 

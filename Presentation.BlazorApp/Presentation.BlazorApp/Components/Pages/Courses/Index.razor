@@ -57,19 +57,18 @@
 
             <tbody>
 
-                @foreach (var course in courses)
-                {
-                    <tr class="course-info">
-                        <th>@course.CourseTitle</th>
-                        <th>@course.Category</th>
-                        <th class="buttons">
-                            @* <button class="btn btn-primary">Edit</button> *@
-                            @* <a href="@($"/edit-course/{course.Id}")" class="btn btn-primary">Edit</a> *@
-                            <a href="/edit-course/@course.Id" class="btn btn-primary">Edit</a>
-
-                            <button class="btn btn-danger" @onclick="() => DeleteAsync(course.Id)">Remove</button>
-                        </th>
-                    </tr>
+                @if (courses != null) {
+                    @foreach (var course in courses!)
+                    {
+                        <tr class="course-info">
+                            <th>@course.CourseTitle</th>
+                            <th>@course.Category</th>
+                            <th class="buttons">
+                                <a href="/edit-course/@course.Id" class="btn btn-primary">Edit</a>
+                                <button class="btn btn-danger" @onclick="() => DeleteAsync(course.Id)">Remove</button>
+                            </th>
+                        </tr>
+                    }
                 }
 
             </tbody>
