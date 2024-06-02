@@ -107,7 +107,7 @@
         IsBusy = true;
         try
         {
-            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Password = SignUpForm.Password, Created = DateTime.Now };
+            var user = new ApplicationUser { UserName = SignUpForm.Email, Email = SignUpForm.Email, FirstName = SignUpForm.FirstName, LastName = SignUpForm.LastName, Created = DateTime.Now };
 
             var createdResult = await UserService.CreateUserAsync(user, SignUpForm.Password, SignUpForm.Role);
             if (createdResult.StatusCode == ResultStatus.OK)

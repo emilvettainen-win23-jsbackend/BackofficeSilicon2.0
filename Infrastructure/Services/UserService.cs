@@ -39,8 +39,7 @@ public class UserService
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email!,
-                    Password = user.Password,
-                    ConfirmPassword = "",
+                    //ConfirmPassword = "",
                     Created = user.Created,
                     Updated = user.Updated
                 };
@@ -174,7 +173,6 @@ public class UserService
             existingUser.FirstName = userDto.FirstName;
             existingUser.LastName = userDto.LastName;
             existingUser.Email = userDto.Email;
-            existingUser.Password = userDto.Password;
             existingUser.Updated = DateTime.Now;
 
             var existingRole = await _roleManager.FindByNameAsync(role);
@@ -199,8 +197,19 @@ public class UserService
             }
 
             var updateResult = await _userManager.UpdateAsync(existingUser);
+            if (!updateResult.Succeeded)
+            {
+                return ResponseFactory.Error();
+            }
 
-            return updateResult.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
+
+
+            var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
+            var updatePassword = await _userManager.ResetPasswordAsync(existingUser, passwordToken , userDto.Password);
+
+
+
+            return updatePassword.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
         }
         catch (Exception ex)
         {
