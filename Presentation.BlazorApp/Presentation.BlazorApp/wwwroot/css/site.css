@@ -662,7 +662,7 @@ form span.field-validation-error::after {
 .courses .deletebox {
   position: fixed;
   top: 50%;
-  left: 60%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
   background-color: #FFFFFF;
@@ -750,7 +750,7 @@ form span.field-validation-error::after {
 .subscribers .deletebox {
   position: fixed;
   top: 50%;
-  left: 60%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
   background-color: #FFFFFF;
@@ -948,6 +948,17 @@ form span.field-validation-error::after {
   border-radius: 15px;
   padding: 10px;
   max-width: 75%;
+}
+
+.accounts .deletebox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background-color: #FFFFFF;
+  padding: 1rem;
+  border: 1px solid gray;
 }
 
 .update-user {

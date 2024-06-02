@@ -48,7 +48,6 @@ public class CourseService
 
     #endregion
 
-
     #region GetOneCourseAsync
 
     public async Task<CourseOne> GetOneCourseAsync(string id)

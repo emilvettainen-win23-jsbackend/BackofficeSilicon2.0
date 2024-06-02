@@ -1,13 +1,14 @@
-﻿@page "/customers"
-@* @using System.Text.Json *@
+﻿@using Infrastructure.Dtos
+@using Infrastructure.Services
 @using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
 @using Presentation.BlazorApp.Models.Customers
-@* @using System.Net.Http.Json
-@using System.Text.Json.Serialization *@
 @using Presentation.BlazorApp.Services
 
+@page "/customers"
+
 @inject HttpClient Http
-@inject CourseService CourseService
+@inject CustomersService CustomersService
 
 @attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
 @attribute [StreamRendering]
@@ -20,7 +21,7 @@
     </div>
 
 
-    @if (customers == null && isLoading)
+    @if (isLoading)
     {
         <p>Loading...</p>
     }
@@ -61,8 +62,8 @@
                         <th>@customer.FirstName @customer.LastName</th>
                         <th>@customer.Email</th>
                         <th class="buttons">
-                        <a href="/edit-course/@customer.Id" class="btn btn-primary">Edit</a>
-                         <button class="btn btn-danger" @onclick="() => DeleteAsync(customer.Id)">Remove</button>
+                        <a href="/edit-customers/@customer.Email" class="btn btn-primary">Edit</a>
+                         <button class="btn btn-danger">Remove</button>
                         </th>
                         </tr>
                     }
@@ -75,10 +76,8 @@
 </section>
 
 
-
-
 @code {
-    private List<Customers>? customers = new();
+    private List<CustomersDto>? customers = new();
 
     private bool isError;
     private bool deleteSuccess;
@@ -87,10 +86,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         try
         {
-            isLoading = true;
-            // customers = await CustomersService.GetAllCustomersAsync();
+            customers = await CustomersService.GetAllCustomersAsync();
         }
         catch (Exception)
         {
@@ -102,26 +101,8 @@
         }
     }
 
-    private async Task DeleteAsync(string id)
-    {
-        // try
-        // {
-        //     var result = await CustomersService.DeleteCustomerAsync(id);
+    // private async Task DeleteAsync(string id)
+    // {
 
-        //     if (result == true)
-        //     {
-        //         var removedCustomer = customers!.FirstOrDefault(c => c.Id == id);
-        //         customers!.Remove(removedCostumer!);
-
-        //         StateHasChanged();
-        //         deleteSuccess = true;
-        //     }
-        //     else
-        //         deleteError = true;
-        // }
-        // catch (Exception)
-        // {
-        //     deleteError = true;
-        // }
-    }
+    // }
 }

@@ -39,7 +39,6 @@ public class UserService
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email!,
-                    //ConfirmPassword = "",
                     Created = user.Created,
                     Updated = user.Updated
                 };
@@ -117,7 +116,7 @@ public class UserService
                     Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Email = user.Email!
+                    Email = user.Email!,
                 }).ToList();
 
                 return userDtos;
@@ -202,14 +201,23 @@ public class UserService
                 return ResponseFactory.Error();
             }
 
+            //var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
+            //var updatePassword = await _userManager.ResetPasswordAsync(existingUser, passwordToken , userDto.Password);
 
+            //return updatePassword.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
 
-            var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
-            var updatePassword = await _userManager.ResetPasswordAsync(existingUser, passwordToken , userDto.Password);
+            if (!string.IsNullOrEmpty(userDto.Password))
+            {
+                var passwordToken = await _userManager.GeneratePasswordResetTokenAsync(existingUser);
+                var updatePassword = await _userManager.ResetPasswordAsync(existingUser, passwordToken, userDto.Password);
 
+                if (!updatePassword.Succeeded)
+                {
+                    return ResponseFactory.Error(message: "Failed to update password.");
+                }
+            }
 
-
-            return updatePassword.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
+            return ResponseFactory.Ok();
         }
         catch (Exception ex)
         {

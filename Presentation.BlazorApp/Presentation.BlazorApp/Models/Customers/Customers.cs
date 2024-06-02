@@ -1,16 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
 
 namespace Presentation.BlazorApp.Models.Customers;
 
 public class Customers
 {
-    public string Id { get; set; } = null!;
+    public string? UserId { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Email { get; set; }
+    public string? Biography { get; set; }
+    public string? PhoneNumber { get; set; }
+    public List<Address>? Addresses { get; set; }
+}
 
-    [Required]
-    public string FirstName { get; set; } = null!;
-    [Required]
-    public string LastName { get; set; } = null!;
 
-    [RegularExpression(@"^(([^<>()\]\\.,;:\s@\""]+(\.[^<>()\]\\.,;:\s@\""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Invalid email address")]
-    public string Email { get; set; } = null!;
+public class Address
+{
+    public string? StreetName { get; set; }
+    public string? OptionalAddress { get; set; }
+    public string? PostalCode { get; set; }
+    public string? City { get; set; }
 }
