@@ -644,6 +644,9 @@ form span.field-validation-error::after {
   background-color: var(--color-gray-400);
 }
 
+.courses {
+  position: relative;
+}
 .courses .header {
   display: flex;
   flex-direction: row;
@@ -655,6 +658,16 @@ form span.field-validation-error::after {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
+}
+.courses .deletebox {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background-color: #FFFFFF;
+  padding: 1rem;
+  border: 1px solid gray;
 }
 
 .new-course .container .content .checkbox-label {
@@ -733,6 +746,16 @@ form span.field-validation-error::after {
 
 .subscribers .subscribe-header {
   margin-bottom: 30px;
+}
+.subscribers .deletebox {
+  position: fixed;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background-color: #FFFFFF;
+  padding: 1rem;
+  border: 1px solid gray;
 }
 
 .update-subscription .container .content .checkboxes {

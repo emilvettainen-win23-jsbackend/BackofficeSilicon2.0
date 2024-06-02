@@ -2,6 +2,7 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using Presentation.BlazorApp.Models.Courses
 @using Presentation.BlazorApp.Services
+@using System.Text.Json
 
 @page "/edit-course/{id}"
 
@@ -52,7 +53,8 @@
                         <span>JPG, JPEG, SVG or PNG.</span>
                         <span>Max filesize 2500 * 1500 </span>
                         <div class="upload-image">
-                            <InputFile id="courseimg" @bind-Value="UpdatedCourse.CourseImageUrl"/>
+                            @* <InputFile id="courseimg" @bind-Value="UpdatedCourse.CourseImageUrl"/> *@
+                            <InputFile id="courseimg" OnChange="UploadCourseImg" />
                             <img src="@UpdatedCourse.CourseImageUrl" style="max-width: 200px; max-height: 200px;" />
                         </div>
                     </div>
@@ -83,7 +85,8 @@
                         <span>JPG, JPEG, SVG or PNG.</span>
                         <span>Max filesize 2500 * 1500 </span>
                         <div class="upload-image">
-                            <InputFile id="authorimg" @bind-Value="UpdatedCourse.Author.ProfileImageUrl"/>
+                            @* <InputFile id="authorimg" @bind-Value="UpdatedCourse.Author.ProfileImageUrl"/> *@
+                            <InputFile id="authorimg" OnChange="UploadAuthorImg" />
                             <img src="@UpdatedCourse.Author.ProfileImageUrl" style="max-width: 200px; max-height: 200px;" />
                         </div>
                     
@@ -164,6 +167,7 @@
 
     [Parameter]
     public string? Id { get; set; }
+    private string? filePath;
 
     private string statusMessage = "";
     private bool isError;
@@ -211,6 +215,9 @@
             if (response.IsSuccessStatusCode)
             {
                 var imageUrl = await response.Content.ReadAsStringAsync();
+
+                // var jsonDocument = JsonDocument.Parse(imageUrl);
+                // filePath = jsonDocument.RootElement.GetProperty("filePath").GetString();
                 UpdatedCourse.CourseImageUrl = imageUrl;
                 statusMessage = "Image was uploaded successfully.";
                 isError = false;

@@ -3,4 +3,15 @@
     .subscribe-header {
         margin-bottom: 30px;
     }
+
+    .deletebox {
+        position: fixed;
+        top: 50%;
+        left: 60%;
+        transform: translate(-50%, -50%);
+        z-index: 999;
+        background-color: #FFFFFF;
+        padding: 1rem;
+        border: 1px solid gray;
+    }
 }

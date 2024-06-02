@@ -21,11 +21,6 @@ public class ApplicationUser : IdentityUser
     [Column(TypeName = "nvarchar(50)")]
     public string LastName { get; set; } = null!;
 
-    //[ProtectedPersonalData]
-    //public string Email { get; set; } = null!;
-
-    public string Password { get; set; } = null!;
-
     [Required]
     [Column(TypeName = "datetime2")]
     public DateTime Created { get; set; }

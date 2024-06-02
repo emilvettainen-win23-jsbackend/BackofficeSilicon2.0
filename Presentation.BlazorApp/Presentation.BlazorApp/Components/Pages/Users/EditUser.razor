@@ -13,7 +13,7 @@
 @inject UserService UserService
 @inject NavigationManager NavigationManager
 
-@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
+@attribute [Authorize(Roles = "SuperAdmin")]
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 

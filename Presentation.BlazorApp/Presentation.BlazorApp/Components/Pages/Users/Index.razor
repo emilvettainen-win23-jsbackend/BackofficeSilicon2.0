@@ -7,7 +7,7 @@
 @inject HttpClient Http
 @inject UserService UserService
 
-@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
+@attribute [Authorize(Roles = "SuperAdmin")]
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 
