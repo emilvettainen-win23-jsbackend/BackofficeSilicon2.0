@@ -926,3 +926,80 @@ form span.field-validation-error::after {
   padding: 10px;
   max-width: 75%;
 }
+
+.update-user {
+  padding: 2rem 0;
+}
+.update-user .container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+.update-user .container h1 {
+  padding-bottom: 0.5rem;
+}
+.update-user .container form {
+  grid-column: 1/13;
+}
+@media (min-width: 992px) {
+  .update-user .container form {
+    grid-column: 3/11;
+  }
+}
+@media (min-width: 1200px) {
+  .update-user .container form {
+    grid-column: 4/10;
+  }
+}
+@media (min-width: 1400px) {
+  .update-user .container form {
+    padding: 0 3rem;
+  }
+}
+.update-user .container form .content {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "role" "button";
+  /*                #form-submit {
+                      grid-area: button;
+                  }*/
+}
+@media (min-width: 768px) {
+  .update-user .container form .content {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "role role" "button button";
+  }
+}
+.update-user .container form .content .input-group .form-control {
+  width: 100%;
+}
+.update-user .container form .content #form-firstname {
+  grid-area: firstname;
+}
+.update-user .container form .content #form-lastname {
+  grid-area: lastname;
+}
+.update-user .container form .content #form-email {
+  grid-area: email;
+}
+.update-user .container form .content #form-password {
+  grid-area: password;
+}
+.update-user .container form .content #form-confirm {
+  grid-area: confirm;
+}
+.update-user .container form .content #form-role {
+  grid-area: role;
+}
+.update-user .container form .content #form-role span {
+  padding-bottom: 5px;
+}
+.update-user .container form .form-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.update-user .container form .form-buttons .nav-link {
+  padding: 0px;
+}

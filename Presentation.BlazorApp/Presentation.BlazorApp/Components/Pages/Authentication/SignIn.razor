@@ -81,11 +81,6 @@
     {
         IsBusy = true;
 
-        // var user = await UserManager.FindByEmailAsync(SignInForm.Email);
-        //  var userClaims = await UserManager.GetUsersForClaimAsync
-
-        //  SignInManager.SignInWithClaimsAsync(user, false, userClaims.);
-
         var result = await SignInManager.PasswordSignInAsync(SignInForm.Email, SignInForm.Password, SignInForm.RememberMe, false);
         if (result.Succeeded)
         {

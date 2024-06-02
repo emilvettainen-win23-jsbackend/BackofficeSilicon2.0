@@ -1,34 +1,17 @@
 ﻿using Infrastructure.Data.Entities;
 using Infrastructure.Dtos;
-using System.Diagnostics;
 
 namespace Infrastructure.Factories;
 
 public class UserFactory
 {
-    //    public static UserEntity CreateUser(UserRegistrationForm form)
-    //    {
-    //        try
-    //        {
-    //            return new UserEntity
-    //            {
-    //                Id = Guid.NewGuid().ToString(),
-    //                FirstName = form.FirstName,
-    //                LastName = form.LastName,   
-    //                Email = form.Email, 
-    //                Password = PasswordHasher.GenerateSecurePassword(form.Password),
-    //            };
-    //        }
-    //        catch { }
-    //        return null!;
-    //    }
     public static UserDto GetUser(ApplicationUser user)
     {
         try
         {
             return new UserDto
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email!,
@@ -39,8 +22,25 @@ public class UserFactory
         }
         catch (Exception)
         {
-
             return new UserDto();
+        }
+    }
+
+    public static AllUsersDto GetAllUsers(ApplicationUser user)
+    {
+        try
+        {
+            return new AllUsersDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email!,
+            };
+        }
+        catch (Exception)
+        {
+            return new AllUsersDto();
         }
     }
 }

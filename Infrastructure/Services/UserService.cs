@@ -13,29 +13,62 @@ public class UserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<UserService> _logger;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-    public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger, AuthenticationStateProvider authenticationStateProvider)
+    public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger, RoleManager<IdentityRole> roleManager, AuthenticationStateProvider authenticationStateProvider)
     {
         _userManager = userManager;
         _logger = logger;
+        _roleManager = roleManager;
         _authenticationStateProvider = authenticationStateProvider;
     }
 
-    public async Task<UserDto> GetCurrentUserAsync()
+    //public async Task<UserDto> GetCurrentUserAsync()
+    //{
+    //    var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+    //    var user = authState.User;
+
+    //    if (user.Identity == null || !user.Identity.IsAuthenticated)
+    //    {
+    //        return new UserDto();
+    //    }
+
+    //    var currentUser = await _userManager.GetUserAsync(user);
+    //    return UserFactory.GetUser(currentUser!) ?? new UserDto();
+    //}
+
+    public async Task<UserDto?> GetOneUserAsync(string userId)
     {
-        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        try
         {
-            return new UserDto();
-        }
+            var user = await _userManager.FindByIdAsync(userId);
 
-        var currentUser = await _userManager.GetUserAsync(user);
-        return UserFactory.GetUser(currentUser!) ?? new UserDto();
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                ConfirmPassword = "", 
+                Created = user.Created,
+                Updated = user.Updated
+            };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            userDto.Role = string.Join(",", roles);
+
+            return userDto;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"ERROR: UserService.GetOneUserAsync() :: {ex.Message}");
+            return null;
+        }
     }
+
 
     public async Task<ResponseResult> CreateUserAsync(ApplicationUser user, string password, string role)
     {
@@ -66,7 +99,7 @@ public class UserService
         }
     }
 
-    public async Task<ResponseResult> UpdateUserAsync(ApplicationUser user)
+    public async Task<ResponseResult> ConfirmEmailAsync(ApplicationUser user)
     {
         try
         {
@@ -81,5 +114,109 @@ public class UserService
             return ResponseFactory.ServerError();
         }
     }
+
+    public async Task<List<AllUsersDto>> GetAllUsersAsync()
+    {
+        try
+        {
+            var users = await _userManager.Users.ToListAsync();
+            if (users != null)
+            {
+                var userDtos = users.Select(user => new AllUsersDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email!
+                }).ToList();
+
+                return userDtos;
+            }
+
+            return new List<AllUsersDto>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"ERROR: UserService.GetAllUsersAsync() :: {ex.Message}");
+            return new List<AllUsersDto>();
+        }
+    }
+
+    public async Task<bool> DeleteUserAsync(string userId)
+    {
+        try
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning("User could not be found.");
+                return false;
+            }
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            _logger.LogError("Could not delete user.");
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"ERROR: UserService.DeleteUserAsync() :: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<ResponseResult> UpdateUserAsync(UserDto userDto, string role)
+    {
+        try
+        {
+            var existingUser = await _userManager.FindByIdAsync(userDto.Id);
+
+            if (existingUser == null)
+            {
+                return ResponseFactory.NotFound();
+            }
+
+            existingUser.FirstName = userDto.FirstName;
+            existingUser.LastName = userDto.LastName;
+            existingUser.Email = userDto.Email;
+            existingUser.Password = userDto.Password;
+            existingUser.Updated = DateTime.Now;
+
+            var existingRole = await _roleManager.FindByNameAsync(role);
+
+            if (existingRole == null)
+            {
+                return ResponseFactory.Error(message: "Role not found.");
+            }
+
+            var removeRolesResult = await _userManager.RemoveFromRolesAsync(existingUser, await _userManager.GetRolesAsync(existingUser));
+
+            if (!removeRolesResult.Succeeded)
+            {
+                return ResponseFactory.Error(message: "Failed to remove existing roles.");
+            }
+
+            var addToRoleResult = await _userManager.AddToRoleAsync(existingUser, role);
+
+            if (!addToRoleResult.Succeeded)
+            {
+                return ResponseFactory.Error(message: "Failed to add role to user.");
+            }
+
+            var updateResult = await _userManager.UpdateAsync(existingUser);
+
+            return updateResult.Succeeded ? ResponseFactory.Ok() : ResponseFactory.Error();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"ERROR: UserService.UpdateUserAsync() :: {ex.Message}");
+            return ResponseFactory.ServerError();
+        }
+    }
+
 
 }

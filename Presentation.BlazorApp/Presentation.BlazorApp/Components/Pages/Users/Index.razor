@@ -1,0 +1,124 @@
+﻿@page "/users"
+@using Infrastructure.Dtos
+@using Infrastructure.Services
+@using Microsoft.AspNetCore.Authorization
+@using Presentation.BlazorApp.Models.Account
+
+@inject HttpClient Http
+@inject UserService UserService
+
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
+@attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
+
+<section class="accounts">
+
+    <div class="header">
+        <h3>Accounts</h3>
+    </div>
+
+
+    @if (accounts == null && isLoading)
+    {
+        <p>Loading...</p>
+    }
+    else if (isError)
+    {
+        <p>Can not fetch accounts right now.</p>
+    }
+    @*     else if (accounts?.Count == 0 && !isLoading)
+    {
+    <p>No accounts available.</p>
+    } *@
+    else
+    {
+        if (deleteSuccess)
+        {
+            <span class="notification"><p>Account has been deleted.</p></span>
+        }
+        if (deleteError)
+        {
+            <span class="notification"><p>Something went wrong. Could not delete account.</p></span>
+        }
+
+        <table class="table table-bordered">
+            <thead>
+                <tr class="account-header">
+                    <th class="title">Name</th>
+                    <th class="title">Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var account in accounts)
+                {
+                    <tr class="account-info">
+                        <th>@account.FirstName @account.LastName</th>
+                        <th>@account.Email</th>
+                        <th class="buttons">
+                            @* <button class="btn btn-primary">Edit</button> *@
+                            @* <a href="@($"/edit-course/{course.Id}")" class="btn btn-primary">Edit</a> *@
+                            <a href="/edit-user/@account.Id" class="btn btn-primary">Edit</a>
+
+                            <button class="btn btn-danger" @onclick="() => DeleteAsync(account.Id)">Remove</button>
+                        </th>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+</section>
+
+@code {
+    private List<AllUsersDto>? accounts = new();
+
+    private bool isError;
+    private bool deleteSuccess;
+    private bool deleteError;
+    bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            accounts = await UserService.GetAllUsersAsync();
+        }
+        catch (Exception)
+        {
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteAsync(string id)
+    {
+        try
+        {
+            var result = await UserService.DeleteUserAsync(id);
+
+            if (result == true)
+            {
+                var removedCourse = accounts!.FirstOrDefault(c => c.Id == id);
+                accounts!.Remove(removedCourse!);
+
+                StateHasChanged();
+                deleteSuccess = true;
+            }
+            else
+                deleteError = true;
+        }
+        catch (Exception)
+        {
+            deleteError = true;
+        }
+    }
+
+}

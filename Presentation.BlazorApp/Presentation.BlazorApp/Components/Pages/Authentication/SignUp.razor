@@ -61,12 +61,6 @@
                     <InputText id="confirm-password" @bind-Value="SignUpForm.ConfirmPassword" class="form-control" placeholder="Enter password again" type="password" />
                     <ValidationMessage For="() => SignUpForm.ConfirmPassword" class="text-danger" />
                 </div>
-@*                 <div id="form-role" class="input-group">
-                     <label for="role">Role</label>
-                     <span>"SuperAdmin", "CIO", "Admin", "Manager"</span>
-                     <InputText id="role" @bind-Value="SignUpForm.Role" class="form-control" placeholder="Enter role" />
-                     <ValidationMessage For="() => SignUpForm.Role" class="text-danger" />
-                </div> *@
 
                     <div id="form-role" class="input-group">
                         <label for="role">Role</label>
@@ -120,9 +114,9 @@
             if (createdResult.StatusCode == ResultStatus.OK)
             {
                 user.EmailConfirmed = true;
-                var updateResult = await UserService.UpdateUserAsync(user);
+                // var updateResult = await UserService.UpdateUserAsync(user);
+                var updateResult = await UserService.ConfirmEmailAsync(user);
                 statusMessage = "User was created successfully.";
-                // NavigationManager.NavigateTo(ReturnUrl ?? "/");
             }
             else if (createdResult.StatusCode == ResultStatus.EXISTS)
             {

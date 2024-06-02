@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Account\" />
+    <Folder Include="Models\Users\" />
     <Folder Include="wwwroot\css\scss\sections\account\" />
   </ItemGroup>
 

@@ -1,0 +1,94 @@
+.update-user {
+    padding: 2rem 0;
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1rem;
+
+        h1 {
+            padding-bottom: .5rem;
+        }
+
+        form {
+            grid-column: 1/13;
+
+            @include lg {
+                grid-column: 3/11;
+            }
+
+            @include xl {
+                grid-column: 4/10;
+            }
+
+            @include xxl {
+                padding: 0 3rem;
+            }
+
+            .content {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: 1fr;
+                grid-template-areas: "firstname" "lastname" "email" "password" "confirm" "role" "button";
+
+                @include md {
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-areas: "firstname lastname" "email email" "password password" "confirm confirm" "role role" "button button";
+                }
+
+                .input-group {
+
+                    .form-control {
+                        width: 100%;
+                    }
+                }
+
+                #form-firstname {
+                    grid-area: firstname;
+                }
+
+                #form-lastname {
+                    grid-area: lastname;
+                }
+
+                #form-email {
+                    grid-area: email;
+                }
+
+                #form-password {
+                    grid-area: password;
+                }
+
+                #form-confirm {
+                    grid-area: confirm;
+                }
+
+                #form-role {
+                    grid-area: role;
+
+                    span {
+                        padding-bottom: 5px;
+                    }
+                }
+
+/*                #form-submit {
+                    grid-area: button;
+                }*/
+            }
+
+            .form-buttons {
+                display: flex;
+                flex-direction: row;
+                gap: 1rem;
+
+                button {
+
+                }
+
+                .nav-link {
+                    padding: 0px;
+                }
+            }
+        }
+    }
+}

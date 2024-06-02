@@ -1,0 +1,162 @@
+﻿@using Infrastructure
+@using Infrastructure.Data.Entities
+@using Infrastructure.Dtos
+@using Infrastructure.Helpers
+@using Infrastructure.Services
+@using Microsoft.AspNetCore.Authorization
+@using Presentation.BlazorApp.Services
+
+
+@page "/edit-user/{id}"
+
+@inject HttpClient HttpClient
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize(Roles = "SuperAdmin, CIO, Admin")]
+@attribute [StreamRendering]
+@rendermode @(new InteractiveServerRenderMode(false))
+
+<section class="update-user">
+    <div class="container">
+
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            <div class="status-message">
+                <p class="@(isError ? "text-danger" : "text-success")">@statusMessage</p>
+            </div>
+        }
+
+        @if (isLoading)
+        {
+            <p> Loading ....</p>
+        }
+        else
+        {
+            <EditForm Model="User" method="post" OnValidSubmit="HandleSubmitAsync" Enhance novalidate>
+                <DataAnnotationsValidator />
+
+                <h3>Edit User</h3>
+
+                <div class="content">
+
+                    <div id="form-firstname" class="input-group">
+                        <label for="first-name">First name</label>
+                        <InputText id="first-name" @bind-Value="User.FirstName" class="form-control" placeholder="Enter first name" />
+                        <ValidationMessage For="() => User.FirstName" class="text-danger" />
+                    </div>
+                    <div id="form-lastname" class="input-group">
+                        <label for="last-name">Last name</label>
+                        <InputText id="last-name" @bind-Value="User.LastName" class="form-control" placeholder="Enter last name" />
+                        <ValidationMessage For="() => User.LastName" class="text-danger" />
+                    </div>
+                    <div id="form-email" class="input-group">
+                        <label for="email">Email</label>
+                        <InputText id="email" @bind-Value="User.Email" class="form-control" placeholder="Enter email" />
+                        <ValidationMessage For="() => User.Email" class="text-danger" />
+                    </div>
+                    <div id="form-password" class="input-group">
+                        <label for="password">Password</label>
+                        <InputText id="password" @bind-Value="User.Password" class="form-control" placeholder="Enter new password" type="password" />
+                        <ValidationMessage For="() => User.Password" class="text-danger" />
+                    </div>
+                    <div id="form-confirm" class="input-group">
+                        <label for="confirm-password">Confirm password</label>
+                        <InputText id="confirm-password" @bind-Value="User.ConfirmPassword" class="form-control" placeholder="Enter password again" type="password" />
+                        <ValidationMessage For="() => User.ConfirmPassword" class="text-danger" />
+                    </div>
+
+                    <div id="form-role" class="input-group">
+                        <label for="role">Role</label>
+                        <InputSelect id="role" @bind-Value="User.Role" class="form-control">
+                            <option value="SuperAdmin">SuperAdmin</option>
+                            <option value="CIO">CIO</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Manager">Manager</option>
+                        </InputSelect>
+                        <ValidationMessage For="() => User.Role" class="text-danger" />
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Save</button>
+
+                    <NavLink class="nav-link" href="/users">
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                    </NavLink>
+                </div>
+
+            </EditForm>
+        }
+
+    </div>
+
+</section>
+
+@code {
+    [SupplyParameterFromForm]
+    private UserDto User { get; set; } = null!;
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string? Role { get; set; }
+
+    private string statusMessage = "";
+    private bool isError;
+    private bool isLoading;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Id))
+        {
+            NavigationManager.NavigateTo("/users");
+        }
+        try
+        {
+            isLoading = true;
+
+            User = await UserService.GetOneUserAsync(Id!);
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error fetching subscriber: {ex.Message}";
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected async Task HandleSubmitAsync()
+    {
+        try
+        {
+            isLoading = true;
+            var response = await UserService.UpdateUserAsync(User, User.Role);
+            if (response.StatusCode == ResultStatus.OK)
+            {
+                statusMessage = "User updated successfully.";
+                isError = false;
+            }
+            else
+            {
+                statusMessage = "Failed to update user.";
+                isError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error updating user: {ex.Message}";
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}
