@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Presentation.BlazorApp.Models.Customers;
+namespace Infrastructure.Dtos;
 
-public class Customers
+public class CustomersDto
 {
     public string Id { get; set; } = null!;
 

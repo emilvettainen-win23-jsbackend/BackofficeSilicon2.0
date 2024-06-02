@@ -9,6 +9,7 @@
 @inject HttpClient HttpClient
 @inject CourseService CourseService
 @inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
 @attribute [StreamRendering]
 @rendermode @(new InteractiveServerRenderMode(false))
 
@@ -53,7 +54,6 @@
                         <div class="upload-image">
                             <InputFile id="courseimg" @bind-Value="UpdatedCourse.CourseImageUrl"/>
                             <img src="@UpdatedCourse.CourseImageUrl" style="max-width: 200px; max-height: 200px;" />
-                            //delete excisiting?
                         </div>
                     </div>
 
@@ -153,7 +153,6 @@
         }
 
         
-
     </div>
 
 </section>
@@ -177,12 +176,12 @@
         {
             NavigationManager.NavigateTo("/courses");
         }
-       
+
 
         try
         {
             isLoading = true;
-          
+
             UpdatedCourse = await CourseService.GetOneCourseAsync(Id!);
         }
         catch (Exception ex)
@@ -201,7 +200,7 @@
     {
         if (e.File != null)
         {
-            var url = "https://fileprovider-silicon-ev-er.azurewebsites.net/api/Upload?code=GJjHL29kB0kQP77bmDGnKEuWpfRlQnVsvW8RfuIpyv9MAzFuw0Xu9A%3D%3D&containerName=courses";
+            var url = ($"{Configuration["CourseImg"]}");
 
             var formData = new MultipartFormDataContent();
             formData.Headers.ContentType!.MediaType = "multipart/form-data";
@@ -237,7 +236,7 @@
     {
         if (e.File != null)
         {
-            var url = "https://fileprovider-silicon-ev-er.azurewebsites.net/api/Upload?code=GJjHL29kB0kQP77bmDGnKEuWpfRlQnVsvW8RfuIpyv9MAzFuw0Xu9A%3D%3D&containerName=profiles";
+            var url = ($"{Configuration["ProfileImg"]}");
 
             var formData = new MultipartFormDataContent();
             formData.Headers.ContentType!.MediaType = "multipart/form-data";

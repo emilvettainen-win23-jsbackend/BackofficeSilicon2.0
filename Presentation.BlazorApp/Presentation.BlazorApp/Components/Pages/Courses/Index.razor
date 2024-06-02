@@ -23,7 +23,7 @@
     </div>
     
 
-    @if (courses == null && isLoading)
+    @if (isLoading)
     {
         <p>Loading...</p>
     }
@@ -31,7 +31,7 @@
     {
         <p>Can not fetch courses right now.</p>
     }
-    else if (courses?.Count == 0 && !isLoading)
+    else if (courses?.Count == null)
     {
         <p>No courses available.</p>
     }
@@ -90,9 +90,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         try
         {
-            isLoading = true;
             courses = await CourseService.GetAllCoursesAsync();
         }
         catch (Exception)

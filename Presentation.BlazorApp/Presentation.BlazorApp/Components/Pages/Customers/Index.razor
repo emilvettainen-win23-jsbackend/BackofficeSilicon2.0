@@ -55,7 +55,7 @@
             <tbody>
 
                 @if (customers != null) {
-@*                     @foreach (var customer in customers!)
+                    @foreach (var customer in customers!)
                     {
                         <tr class="course-info">
                         <th>@customer.FirstName @customer.LastName</th>
@@ -65,10 +65,8 @@
                          <button class="btn btn-danger" @onclick="() => DeleteAsync(customer.Id)">Remove</button>
                         </th>
                         </tr>
-                    } *@
+                    }
                 }
-
-
 
             </tbody>
 
@@ -92,7 +90,7 @@
         try
         {
             isLoading = true;
-            // customers = await CustomersService.GetAllCoursesAsync();
+            // customers = await CustomersService.GetAllCustomersAsync();
         }
         catch (Exception)
         {

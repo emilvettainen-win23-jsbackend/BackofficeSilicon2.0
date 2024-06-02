@@ -1003,3 +1003,104 @@ form span.field-validation-error::after {
 .update-user .container form .form-buttons .nav-link {
   padding: 0px;
 }
+
+.chat-container {
+  padding: 20px;
+  background-color: #EFF2FC;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.chat-container .start-chat-container {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 20px;
+  background-color: #EFF2FC;
+  border-radius: 8px;
+}
+@media (min-width: 576px) {
+  .chat-container .start-chat-container {
+    width: 70%;
+  }
+}
+@media (min-width: 768px) {
+  .chat-container .start-chat-container {
+    width: 60%;
+  }
+}
+.chat-container .start-chat-container p {
+  color: #0B0F19;
+}
+.chat-container .start-chat-container .form-control {
+  padding: 0.85rem;
+  width: 100%;
+  box-shadow: none;
+  background-color: #FFFFFF;
+  color: var(--clr-text-body);
+}
+.chat-container .start-chat-container .form-control:focus {
+  color: #565973;
+}
+.chat-container .start-chat-container .form-control::placeholder {
+  color: #565973;
+}
+.chat-container .chat-window .message-box {
+  padding: 10px;
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 400px;
+}
+.chat-container .chat-window .message-box .message-bubble {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 15px;
+  clear: both;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  text-wrap: wrap;
+}
+.chat-container .chat-window .message-box .message-bubble.received {
+  background-color: #8B5CF6;
+  color: white;
+  align-self: flex-start;
+  text-align: left;
+}
+.chat-container .chat-window .message-box .message-bubble.sent {
+  background-color: #6366F1;
+  color: white;
+  align-self: flex-end;
+  text-align: right;
+}
+.chat-container .chat-window .message-box .typing-container {
+  position: absolute;
+  bottom: 10px;
+}
+.chat-container .chat-window .message-box .typing-container p {
+  color: #0B0F19;
+  padding: 0;
+  margin: 0;
+}
+.chat-container .chat-window .input-group {
+  display: flex;
+}
+.chat-container .chat-window .input-group textarea {
+  resize: none;
+  height: 80px;
+  flex-grow: 1;
+  box-shadow: none;
+}
+.chat-container .chat-window .input-group .input-group-append {
+  display: flex;
+  align-items: stretch;
+}
+.chat-container .chat-window .input-group .input-group-append .btn-primary {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}

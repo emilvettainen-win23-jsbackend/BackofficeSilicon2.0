@@ -19,9 +19,14 @@ public class ChatHub : Hub
         await Clients.Others.SendAsync("UserTyping", userName);
     }
 
-    public async Task SendMessageToAll(string userName, string message, DateTime dateTime)
+    //public async Task SendMessageToAll(string userName, string message, DateTime dateTime)
+    //{
+    //    await Clients.All.SendAsync("ReceiveMessage", userName, message, dateTime);
+    //}
+
+    public async Task Broadcast(string username, string message)
     {
-        await Clients.All.SendAsync("ReceiveMessage", userName, message, dateTime);
+        await Clients.All.SendAsync("Broadcast", username, message);
     }
 
 }

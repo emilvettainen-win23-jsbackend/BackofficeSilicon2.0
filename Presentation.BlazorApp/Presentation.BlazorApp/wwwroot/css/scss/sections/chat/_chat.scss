@@ -1,0 +1,130 @@
+.chat-container {
+    padding: 20px;
+    background-color: #EFF2FC;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+
+    .start-chat-container {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+        padding: 20px;
+        background-color: #EFF2FC;
+        border-radius: 8px;
+
+        @include sm {
+            width: 70%;
+        }
+
+        @include md {
+            width: 60%;
+        }
+
+
+        p {
+            color: #0B0F19;
+        }
+
+        .form-control {
+            padding: .85rem;
+            width: 100%;
+            box-shadow: none;
+            background-color: #FFFFFF;
+            color: var(--clr-text-body);
+
+
+            &:focus {
+                color: #565973;
+            }
+
+            &::placeholder {
+                color: #565973;
+            }
+        }
+    }
+
+
+    .chat-window {
+
+
+        .message-box {
+            padding: 10px;
+            border: 1px solid #FFFFFF;
+            border-radius: 4px;
+            background-color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 400px;
+
+            .message-bubble {
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 15px;
+                clear: both;
+                display: flex;
+                flex-direction: column;
+                width: fit-content;
+                text-wrap: wrap;
+
+
+                &.received {
+                    background-color: #8B5CF6;
+                    color: white;
+                    align-self: flex-start;
+                    text-align: left;
+                }
+
+                &.sent {
+                    background-color: #6366F1;
+                    color: white;
+                    align-self: flex-end;
+                    text-align: right;
+                }
+            }
+
+            .typing-container {
+                position: absolute;
+                bottom: 10px;
+
+
+                p {
+                    color: #0B0F19;
+                    padding: 0;
+                    margin: 0;
+                }
+
+
+                .typing-indicator {
+                }
+            }
+        }
+
+
+
+        .input-group {
+            display: flex;
+
+
+            textarea {
+                resize: none;
+                height: 80px;
+                flex-grow: 1;
+                box-shadow: none;
+            }
+
+            .input-group-append {
+                display: flex;
+                align-items: stretch;
+
+                .btn-primary {
+                    border-start-start-radius: 0;
+                    border-end-start-radius: 0;
+                }
+            }
+        }
+    }
+}

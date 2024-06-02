@@ -1,10 +1,16 @@
-﻿namespace Infrastructure.Services;
+﻿using Infrastructure.Dtos;
+
+namespace Infrastructure.Services;
 
 public class CustomersService
 {
 
     #region GetAllCustomersAsync
     //READ
+    //public async Task<CustomersDto> GetAllCustomersAsync()
+    //{
+
+    //}
     #endregion
 
     #region GetOneCustomerAsync

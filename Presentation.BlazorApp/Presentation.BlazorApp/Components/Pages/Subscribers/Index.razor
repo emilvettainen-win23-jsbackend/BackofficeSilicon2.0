@@ -82,11 +82,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         try
         {
             subscribers = await SubscriberService.GetAllSubscribersAsync();
             isError = false;
-            isLoading = true;
+            
         }
         catch (Exception)
         {

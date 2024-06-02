@@ -1,11 +1,7 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore.Storage.Json;
-using Newtonsoft.Json;
-using Presentation.BlazorApp.Models;
+﻿using Presentation.BlazorApp.Models;
 using Presentation.BlazorApp.Models.Courses;
-using System.Text;
 using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace Presentation.BlazorApp.Services;
 
@@ -13,11 +9,13 @@ public class CourseService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<CourseService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public CourseService(HttpClient httpClient, ILogger<CourseService> logger)
+    public CourseService(HttpClient httpClient, ILogger<CourseService> logger, IConfiguration configuration)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _configuration = configuration;
     }
 
     #region GetAllCoursesAsync
@@ -27,7 +25,7 @@ public class CourseService
         {
             var query = new GraphQLQuery { Query = "{ getAllCourses { id courseTitle category } }" };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            var response = await _httpClient.PostAsJsonAsync($"{_configuration["Courses"]}", query);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
@@ -60,7 +58,7 @@ public class CourseService
             var query = @" query ($id: String!) { getCourseById(id: $id) { id courseTitle courseIngress courseDescription courseImageUrl isBestseller category created lastUpdated rating { inNumbers inProcent } prices {originalPrice discountPrice } included { hoursOfVideo articles resources lifetimeAccess certificate } author { fullName biography profileImageUrl socialMedia { youTubeUrl subscribers facebookUrl followers } } highlights { highlight } content { title description } } }";
             var request = new { query, variables = new { id } };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", request);
+            var response = await _httpClient.PostAsJsonAsync($"{_configuration["Courses"]}", request);
             response.EnsureSuccessStatusCode();
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -78,13 +76,11 @@ public class CourseService
                     CourseImageUrl = courseElement.GetProperty("courseImageUrl").GetString() ?? "",
                     IsBestseller = courseElement.GetProperty("isBestseller").GetBoolean(),
                     Category = courseElement.GetProperty("category").GetString() ?? "",
-                    //Created = courseElement.GetProperty("created").GetDateTime(),
-                    //LastUpdated = courseElement.GetProperty("lastUpdated").GetDateTime(),
                     Rating = courseElement.TryGetProperty("rating", out var ratingElement) ? new Rating
                     {
                         InNumbers = ratingElement.GetProperty("inNumbers").GetDecimal(),
                         InProcent = ratingElement.GetProperty("inProcent").GetDecimal()
-                    } /*: new Rating(),*/ : null!,
+                    } : null!,
                     Author = courseElement.TryGetProperty("author", out var authorElement) ? new Author
                     {
                         FullName = authorElement.GetProperty("fullName").GetString() ?? "",
@@ -96,8 +92,8 @@ public class CourseService
                             Subscribers = socialMediaElement.GetProperty("subscribers").GetString() ?? "",
                             FacebookUrl = socialMediaElement.GetProperty("facebookUrl").GetString() ?? "",
                             Followers = socialMediaElement.GetProperty("followers").GetString() ?? ""
-                        } /*: new SocialMedia()*/ : null
-                    } /*: new Author(),*/ : null!,
+                        } : null
+                    } : null!,
                     Highlights = courseElement.TryGetProperty("highlights", out var highlightsElement) ? highlightsElement.EnumerateArray().Select(highlightElement => new Highlights
                     {
                         Highlight = highlightElement.GetProperty("highlight").GetString() ?? ""
@@ -111,7 +107,7 @@ public class CourseService
                     {
                         OriginalPrice = priceElement.GetProperty("originalPrice").GetDecimal(),
                         DiscountPrice = priceElement.GetProperty("discountPrice").GetDecimal()
-                    } /*: new Price(),*/ : null!,
+                    } : null!,
                     Included = courseElement.TryGetProperty("included", out var includedElement) ? new Included
                     {
                         HoursOfVideo = includedElement.GetProperty("hoursOfVideo").GetInt32(),
@@ -119,7 +115,7 @@ public class CourseService
                         Resources = includedElement.GetProperty("resources").GetInt32(),
                         LifetimeAccess = includedElement.GetProperty("lifetimeAccess").GetBoolean(),
                         Certificate = includedElement.GetProperty("certificate").GetBoolean()
-                    } /*: new Included()*/ : null!,
+                    } : null!,
                 };
 
                 return course;
@@ -144,7 +140,7 @@ public class CourseService
         {
             var query = new GraphQLQuery { Query = "{ getAllCourses { author { fullName } }" };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            var response = await _httpClient.PostAsJsonAsync("", query);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
@@ -172,7 +168,7 @@ public class CourseService
         {
             var query = new GraphQLQuery { Query = "{ getAllCategories }" };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", query);
+            var response = await _httpClient.PostAsJsonAsync("", query);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<DynamicGraphQLResponse>();
@@ -201,8 +197,7 @@ public class CourseService
             var query = @"mutation($id: String!) { deleteCourse(id: $id) }";
             var request = new { query, variables = new { id } };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=SC_MS2mU9ssVKvaSwHbS8eaAwndAzPVvGRFVe7Vq68joAzFuhzy1Dw%3D%3D", request);
-
+            var response = await _httpClient.PostAsJsonAsync($"{_configuration["Courses"]}", request);
             response.EnsureSuccessStatusCode();
             return true; 
         }
@@ -227,7 +222,7 @@ public class CourseService
                 variables = new { input = course }
             };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=Hdh1N9pxfiRQQL-L2i2Q9k6Kt7AZRlamhYKcr8ZVLwIAAzFuREhEZw%3D%3D", query);
+            var response = await _httpClient.PostAsJsonAsync($"{_configuration["CreateUpdateCourse"]}", query);
 
             response.EnsureSuccessStatusCode();
             return true;
@@ -255,7 +250,7 @@ public class CourseService
                 variables = new { input = course }
             };
 
-            var response = await _httpClient.PostAsJsonAsync("https://courseproviderv2-silicon-ev-er.azurewebsites.net/api/graphql?code=Hdh1N9pxfiRQQL-L2i2Q9k6Kt7AZRlamhYKcr8ZVLwIAAzFuREhEZw%3D%3D", request);
+            var response = await _httpClient.PostAsJsonAsync($"{_configuration["CreateUpdateCourse"]}", request);
 
             response.EnsureSuccessStatusCode();
             return true;
